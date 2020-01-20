@@ -1,0 +1,22 @@
+{
+    "name": "ggj",
+    "version": "0.1.0",
+    "description": "An entry for the 2020 Global Game Jam",
+    "main": "webpack.config.js",
+    "authors": [
+        "istarnion"
+    ],
+    "scripts": {
+        "watch": "webpack --watch",
+        "start": "webpack-dev-server --open",
+        "build": "webpack"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.8.3",
+        "@babel/preset-env": "^7.8.3",
+        "babel-loader": "^8.0.6",
+        "webpack": "^4.41.5",
+        "webpack-cli": "^3.3.10",
+        "webpack-dev-server": "^3.10.1"
+    }
+}
