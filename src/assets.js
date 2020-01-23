@@ -1,6 +1,8 @@
 export const images = {
     // EXAMPLE:
     // menuBG: "res/sprites/MenuScreenBackground.png",
+    // Test
+    gloomdungeon_side: "res/gloomdungeon_side.png"
 };
 
 export const animations = {
@@ -17,5 +19,14 @@ export const animations = {
         ]
     }
     */
+};
+
+export const maps = {
+    // EXAMPLE
+    /*
+    overworld: "res/maps/overworld.json"
+    */
+    // Test
+    gloomcastle: "res/gloomcastle.json"
 };
 

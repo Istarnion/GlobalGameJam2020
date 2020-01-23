@@ -1,17 +1,17 @@
-import { gfx, images } from "./graphics.js";
+import { gfx, sprites } from "./graphics.js";
 
 export class Tileset {
     constructor(image, tileWidth, tileHeight, margin, spacing) {
-        this.tilemap = images[image];
+        this.tilemap = sprites[image];
         this.width = tileWidth;
         this.height = tileHeight;
         this.margin = margin;
         this.spacing = spacing;
 
-        this.imgWidth = this.tilemap.width;
+        const imgWidth = this.tilemap.width;
         this.widthWithSpacing = this.width + this.spacing;
         this.heightWithSpacing = this.height + this.spacing;
-        this.tilesAcross = Math.floor(imgWidth / widthWithSpacing);
+        this.tilesAcross = Math.floor(imgWidth / this.widthWithSpacing);
         this.animated_tiles = {};
     }
 
@@ -32,19 +32,20 @@ export class Tileset {
             if(now - animated_tile.last_frame_start > animated_tile.current.duration) {
                 animated_tile.last_frame_start = now;
                 ++animated_tile.current_index;
-                if(animated_tile.current_index > animated_tile.frames.length) {
+                if(animated_tile.current_index >= animated_tile.frames.length) {
                     animated_tile.current_index = 0;
                 }
 
                 animated_tile.current = animated_tile.frames[animated_tile.current_index];
-                tile = animated_tile.current.tile;
             }
+
+            tile = animated_tile.current.tile;
         }
 
         gfx.drawImage(
             this.tilemap,
             this.margin + this.widthWithSpacing * (tile % this.tilesAcross),
-            this.margin + this.heightWithSpacing * Math.floor(tile / tilesAcross),
+            this.margin + this.heightWithSpacing * Math.floor(tile / this.tilesAcross),
             this.width, this.height,
             x, y, this.width, this.height);
     }

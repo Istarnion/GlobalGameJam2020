@@ -1,6 +1,10 @@
 import { images } from "./graphics.js";
+import { ajax } from "./ajax.js"
+import { Tileset } from "./tileset.js";
 
 // Reference: https://doc.mapeditor.org/en/stable/reference/json-map-format/
+
+export const tiled_map_defs = {};
 
 function createTileset(ts) {
     const result = new Tileset(ts.name, ts.tilewidth, ts.tileheight, ts.margin, ts.spacing);
@@ -23,15 +27,20 @@ function createTileset(ts) {
             result.animated_tiles[parseInt(tile)] = anim;
         }
     }
+
+    return result;
 }
 
 export class TiledMap {
-    constructor(map_json) {
-        const map = JSON.parse(map_json);
+    constructor(map_name) {
+        const map = JSON.parse(tiled_map_defs[map_name]);
 
+        this.name = map_name;
         this.properties = {};
-        for(const prop of map.properties) {
-            this.properties[prop.name] = prop.value;
+        if(typeof map.properties !== 'undefined') {
+            for(const prop of map.properties) {
+                this.properties[prop.name] = prop.value;
+            }
         }
 
         this.tileset = createTileset(map.tilesets[0]);
@@ -49,8 +58,10 @@ export class TiledMap {
                     properties: {}
                 };
 
-                for(const prop of l.properties) {
-                    layer.properties[prop.name] = prop.value;
+                if(typeof l.properties !== 'undefined') {
+                    for(const prop of l.properties) {
+                        layer.properties[prop.name] = prop.value;
+                    }
                 }
 
                 this.layers.push(layer);
@@ -80,10 +91,46 @@ export class TiledMap {
             for(var y=0; y<this.height; ++y) {
                 for(var x=0; x<this.width; ++x) {
                     const index = x + y * this.width;
-                    this.tileset.drawTile(layer.tiles[i], x*this.tile_width, y*this.tile_height);
+                    this.tileset.drawTile(layer.tiles[index],
+                                          x*this.tile_width,
+                                          y*this.tile_height);
                 }
             }
         }
     }
+}
+
+export function loadMapDefs(maps) {
+    return new Promise((resolve, reject) => {
+        if(maps.length === 0) {
+            resulve();
+            return;
+        }
+
+        const map_promises = [];
+
+        for(const map_name in maps) {
+            map_promises.push(new Promise((resolve, reject) => {
+                ajax.get(maps[map_name])
+                .then((map_def) => {
+                    tiled_map_defs[map_name] = map_def;
+                    resolve();
+                })
+                .catch((url) => {
+                    console.error("Failed to fetch map def at "+url);
+                    reject(url);
+                });
+            }));
+        }
+
+        Promise.all(map_promises)
+        .then(() => {
+            resolve();
+        })
+        .catch((failed_maps) => {
+            console.error("Failed to load "+failed_maps);
+            reject(failed_maps);
+        });
+    });
 }
 

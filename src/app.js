@@ -1,5 +1,6 @@
 import { gfx, setGameSize, clear, loadImages } from "./graphics.js";
-import { images } from "./assets.js";
+import { images, maps } from "./assets.js";
+import { loadMapDefs, TiledMap } from "./tiled_map.js";
 import { input } from "./input.js";
 import { musicManager } from "./musicManager";
 
@@ -8,13 +9,15 @@ setGameSize(800, 600);
 gfx.fillText("Loading...", gfx.width / 2, gfx.height / 2);
 
 let prevTime = performance.now();
+let testmap = null;
 
 export let gameState = "";
 
-const init = () => {
+function init() {
+    testmap = new TiledMap('gloomcastle');
 }
 
-const update = () => {
+function update() {
     clear();
     const now = performance.now();
     const deltaTime = (now - prevTime) / 1000.0;
@@ -22,6 +25,8 @@ const update = () => {
 
     input.update();
     musicManager.update(deltaTime);
+
+    testmap.draw();
 
     switch(gameState) {
         default: break;
@@ -38,7 +43,7 @@ for(const img in images) {
     }
 }
 
-loadImages(imagesToLoad).then(() => {
+Promise.all([loadMapDefs(maps), loadImages(imagesToLoad)]).then(() => {
     init();
     update(); // This starts the update loop
 });
