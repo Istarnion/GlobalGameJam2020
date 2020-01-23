@@ -3,7 +3,26 @@ import { images } from "./graphics.js";
 // Reference: https://doc.mapeditor.org/en/stable/reference/json-map-format/
 
 function createTileset(ts) {
-    return new Tileset(ts.name, ts.tilewidth, ts.tileheight, ts.margin, ts.spacing);
+    const result = new Tileset(ts.name, ts.tilewidth, ts.tileheight, ts.margin, ts.spacing);
+    for(const tile in ts.tiles) {
+        if(ts.tiles[tile].hasOwnProperty('animation')) {
+            const anim = {};
+            anim.last_frame_start = performance.now();
+            anim.current_index = 0;
+            anim.frames = [];
+
+            for(const frame of ts.tiles[tile].animation) {
+                anim.frames.push({
+                    tile: frame.tileid,
+                    duration: frame.duration
+                });
+            }
+
+            anim.current = anim.frames[0];
+
+            result.animated_tiles[parseInt(tile)] = anim;
+        }
+    }
 }
 
 export class TiledMap {

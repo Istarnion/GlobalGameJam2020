@@ -12,6 +12,7 @@ export class Tileset {
         this.widthWithSpacing = this.width + this.spacing;
         this.heightWithSpacing = this.height + this.spacing;
         this.tilesAcross = Math.floor(imgWidth / widthWithSpacing);
+        this.animated_tiles = {};
     }
 
     /*
@@ -24,6 +25,21 @@ export class Tileset {
         if(tile === 0) return;
 
         --tile;
+
+        const animated_tile = this.animated_tiles[tile];
+        if(!!animated_tile) {
+            const now = performance.now();
+            if(now - animated_tile.last_frame_start > animated_tile.current.duration) {
+                animated_tile.last_frame_start = now;
+                ++animated_tile.current_index;
+                if(animated_tile.current_index > animated_tile.frames.length) {
+                    animated_tile.current_index = 0;
+                }
+
+                animated_tile.current = animated_tile.frames[animated_tile.current_index];
+                tile = animated_tile.current.tile;
+            }
+        }
 
         gfx.drawImage(
             this.tilemap,
