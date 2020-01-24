@@ -110,7 +110,7 @@ export class TimerInstance {
         });
     }
 
-    tween(duration, obj, target, func_name) {
+    tween(duration, obj, target, func_name, after) {
         function the_good_tween(t) {
             return 3*t*t - 2*t*t*t;
         }
@@ -149,6 +149,10 @@ export class TimerInstance {
             const t = tween(1);
             for(const prop in target) {
                 obj[prop] = original_values[prop]*(1-t) + target[prop]*t;
+            }
+
+            if(after) {
+                after();
             }
         });
     }

@@ -11,11 +11,16 @@ gfx.fillText("Loading...", gfx.width / 2, gfx.height / 2);
 
 let prevTime = performance.now();
 let testmap = null;
+let circle = { radius: 64 };
 
 export let gameState = "";
 
 function init() {
     testmap = new TiledMap('gloomcastle');
+    const starttime = performance.now();
+    Timer.tween(3, circle, { radius: 128 }, 'inout', () => {
+        console.log('tween complete: '+(performance.now()-starttime)/1000);
+    });
 }
 
 function update() {
@@ -34,6 +39,12 @@ function update() {
     }
 
     Timer.update(deltaTime);
+
+    gfx.fillStyle = 'white';
+    gfx.beginPath();
+    gfx.arc(circle.radius*4, circle.radius*3, circle.radius, 0, 2*Math.PI);
+    gfx.fill();
+    gfx.fillText(`radius: ${circle.radius}`, 32, 32);
 
     window.requestAnimationFrame(update);
     input.lateUpdate();
