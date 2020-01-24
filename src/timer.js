@@ -2,12 +2,22 @@
 //
 // USAGE:
 //
+// Run function every frame for 3 seconds:
+// Timer.during(3, () => { ... });
+//
+// the callback gets passed the delta time, and the time remaining, both in seconds
+//
+// during can also take another function as a third parameter that will be called after the last
+// time the main callback is called.
+//
 // Print a random number after 2 seconds
 // Timer.after(2, () => { console.log(Math.random()); });
 //
 // Print a random number at 2 second intervals 5 times
 // If the last option is left out, it pulses for ever.
 // Timer.every(2, () => { console.log(Math.random()); }, 5);
+//
+// The pulsing can be cancelled early by returning false from the callback.
 //
 // The callbacks passed to after and every get passed the callback it self to allow the following:
 // Pulse for ever, but with random intervals:
@@ -16,10 +26,7 @@
 //     Timer.after(Math.random(), f);
 // });
 //
-// It may be useful to create more local timers. (To have pulses that last until something gets destroyed and so on).
-// to get that, import the TimerInstance class, and create a new instance from that
-//
-// Lastly, the script function:
+// To setup scripted events:
 // Timer.script(function*() {
 //     console.log("Walk to the door");
 //     yield 2;
@@ -29,6 +36,20 @@
 // });
 //
 // Note that Timer.script must be passed a generator function
+//
+// Tween the radius of a circle from up to 64 and back over 1 second:
+// const circle = { radius: 16 };
+// Timer.tween(1, circle, { radius: 64 }, 'inout');
+//
+// The fourth parameter decides if the tween should move the values up to target ('in'),
+// from target back to initial 'out', or up to target and back again ('inout').
+//
+// Like with duration, you can pass another function as a last parameter that will get called when the tween is complete.
+//
+// It may be useful to create more local timers. (To have pulses that last until something gets destroyed and so on).
+// to get that, import the TimerInstance class, and create a new instance from that
+//
+// Also, the times and durations here is approximations at best. Do not rely on them to be accurate
 //
 
 function _nothing_() {}
