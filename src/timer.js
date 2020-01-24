@@ -109,6 +109,49 @@ export class TimerInstance {
             }
         });
     }
+
+    tween(duration, obj, target, func_name) {
+        function the_good_tween(t) {
+            return 3*t*t - 2*t*t*t;
+        }
+
+        const tween_funcs = {
+            in: the_good_tween,
+            out: (t) => {
+                t=1-t;
+                return the_good_tween(t);
+            },
+            inout: (t) => {
+                if(t<0.5) t*=2;
+                else t=1-(2*(t-0.5));
+                return the_good_tween(t);
+            }
+        };
+
+        var time = 0;
+        const tween = tween_funcs[func_name || 'in'];
+        const original_values = {};
+        for(const prop in target) {
+            original_values[prop] = obj[prop];
+        }
+
+        this.during(duration, (dt, remaining) => {
+            // Run every frame until done
+            time += dt;
+            const t = tween(Math.min(time / duration, 1));
+
+            for(const prop in target) {
+                obj[prop] = original_values[prop]*(1-t) + target[prop]*t;
+            }
+        },
+        () => {
+            // Run once after done
+            const t = tween(1);
+            for(const prop in target) {
+                obj[prop] = original_values[prop]*(1-t) + target[prop]*t;
+            }
+        });
+    }
 }
 
 export const Timer = new TimerInstance();

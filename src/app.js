@@ -16,14 +16,6 @@ export let gameState = "";
 
 function init() {
     testmap = new TiledMap('gloomcastle');
-
-    Timer.script(function*() {
-        console.log("Walk to the door");
-        yield 2;
-        console.log("Open the door");
-        yield 1;
-        console.log("Look outside");
-    });
 }
 
 function update() {
