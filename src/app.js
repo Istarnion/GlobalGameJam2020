@@ -3,6 +3,7 @@ import { images, maps } from "./assets.js";
 import { loadMapDefs, TiledMap } from "./tiled_map.js";
 import { input } from "./input.js";
 import { musicManager } from "./musicManager";
+import { Timer } from "./timer.js";
 
 setGameSize(800, 600);
 
@@ -15,6 +16,14 @@ export let gameState = "";
 
 function init() {
     testmap = new TiledMap('gloomcastle');
+
+    Timer.script(function*() {
+        console.log("Walk to the door");
+        yield 2;
+        console.log("Open the door");
+        yield 1;
+        console.log("Look outside");
+    });
 }
 
 function update() {
@@ -31,6 +40,8 @@ function update() {
     switch(gameState) {
         default: break;
     }
+
+    Timer.update(deltaTime);
 
     window.requestAnimationFrame(update);
     input.lateUpdate();

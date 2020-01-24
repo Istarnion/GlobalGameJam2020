@@ -20,18 +20,16 @@
 // to get that, import the TimerInstance class, and create a new instance from that
 //
 // Lastly, the script function:
-// Timer.script(function*(wait) {
+// Timer.script(function*() {
 //     console.log("Walk to the door");
-//     wait(2);
+//     yield 2;
 //     console.log("Open the door");
-//     wait(1);
+//     yield 1;
 //     console.log("Look outside");
 // });
 //
 // Note that Timer.script must be passed a generator function
 //
-
-export const Timer = new TimerInstance();
 
 function _nothing_() {}
 
@@ -40,7 +38,7 @@ function updateTimerHandle(handle, dt) {
     handle.during(dt, Math.max(handle.limit - handle.time, 0));
 
     while(handle.time >= handle.limit && handle.count > 0) {
-        if(!handle.after(handle.after)) {
+        if(handle.after(handle.after) === false) {
             handle.count = 0;
             break;
         }
@@ -56,15 +54,7 @@ export class TimerInstance {
     }
 
     update(dt) {
-        const to_update = [];
-
-        // Copy over, because this.functions may be
-        // mutated during update
-        for(const handle of this.functions) {
-            to_update.push(handle);
-        }
-
-        for(var i=to_update.length-1; i>=0; --i) {
+        for(var i=this.functions.length-1; i>=0; --i) {
             const handle = this.functions[i];
             updateTimerHandle(handle, dt);
 
@@ -80,12 +70,12 @@ export class TimerInstance {
 
     during(delay, during, after) {
         const handle = {
-            timer: 0,
+            time: 0,
             during: during,
             after: after || _nothing_,
             limit: delay,
-            count: 0
-        }
+            count: 1
+        };
 
         this.functions.push(handle);
         return handle;
@@ -96,7 +86,7 @@ export class TimerInstance {
     }
 
     every(delay, after, count) {
-        const count = count || Infinity;
+        count = count || Infinity;
         const handle = {
             time: 0,
             during: _nothing_,
@@ -110,19 +100,16 @@ export class TimerInstance {
     }
 
     script(f) {
-        const coroutine = (f) => {
-            const o = f();
-            return function(x) {
-                o.next(x);
-            };
-        };
+        const coroutine = f();
 
-        const co = coroutine(f);
-        const self = this;
-        co(function*(t) {
-            this.after(t, co);
-            yield;
+        this.after(1, (f) => {
+            const delay = coroutine.next();
+            if(!delay.done) {
+                this.after(delay.value, f);
+            }
         });
     }
 }
+
+export const Timer = new TimerInstance();
 
