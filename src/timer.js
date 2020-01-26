@@ -98,6 +98,10 @@ export class TimerInstance {
             count: 1
         };
 
+        handle.cancel = () => {
+            handle.count = 0;
+        };
+
         this.functions.push(handle);
         return handle;
     }
@@ -114,6 +118,10 @@ export class TimerInstance {
             after: after,
             limit: delay,
             count: count
+        };
+
+        handle.cancel = () => {
+            handle.count = 0;
         };
 
         this.functions.push(handle);

@@ -11,6 +11,7 @@ gfx.fillText("Loading...", gfx.width / 2, gfx.height / 2);
 
 let prevTime = performance.now();
 let testmap = null;
+let test_timer;
 
 export let gameState = "";
 
@@ -31,6 +32,13 @@ function update() {
 
     switch(gameState) {
         default: break;
+    }
+
+    if(input.isKeyJustPressed("space")) {
+        if(test_timer) test_timer.cancel();
+        test_timer = Timer.after(3, () => {
+            console.log("Key pressed 3 s ago");
+        });
     }
 
     Timer.update(deltaTime);
