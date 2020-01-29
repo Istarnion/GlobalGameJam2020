@@ -11,10 +11,13 @@
  *
  * Typically, Room and GameObject are inherited from and never used directly, while Area objects are used
  * as-is in the classes derived from Room that need one.
+ *
+ * The exported global room stack is used as an overarching manager for the different rooms
  */
 
 export class Room {
     init() {}
+    finalize() {}
     update(dt) {}
     pause() {}
     resume() {}
@@ -55,4 +58,35 @@ export class GameObject {
         this.dead = true;
     }
 }
+
+class RoomStack {
+    constructor() {
+        this.rooms = [];
+    }
+
+    update(dt) {
+        if(this.rooms.length > 0) {
+            this.rooms[this.rooms.length-1].update(dt);
+        }
+    }
+
+    push(room) {
+        if(this.rooms.length > 0) {
+            this.rooms[this.rooms.length-1].pause();
+        }
+
+        this.rooms.push(room);
+        room.init();
+    }
+
+    pop() {
+        this.rooms.pop().finalize();
+
+        if(this.rooms.length > 0) {
+            this.rooms[this.rooms.length-1].resume();
+        }
+    }
+}
+
+export const roomStack = new RoomStack();
 

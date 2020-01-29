@@ -4,6 +4,7 @@ import { loadMapDefs, TiledMap } from "./tiled_map.js";
 import { input } from "./input.js";
 import { musicManager } from "./musicManager";
 import { Timer } from "./timer.js";
+import { roomStack } from "./game.js";
 
 setGameSize(800, 600);
 
@@ -11,12 +12,11 @@ gfx.fillText("Loading...", gfx.width / 2, gfx.height / 2);
 
 let prevTime = performance.now();
 let testmap = null;
-let test_timer;
-
-export let gameState = "";
 
 function init() {
     testmap = new TiledMap('gloomcastle');
+
+    // TODO: Add a room to the roomStack
 }
 
 function update() {
@@ -30,16 +30,7 @@ function update() {
 
     testmap.draw();
 
-    switch(gameState) {
-        default: break;
-    }
-
-    if(input.isKeyJustPressed("space")) {
-        if(test_timer) test_timer.cancel();
-        test_timer = Timer.after(3, () => {
-            console.log("Key pressed 3 s ago");
-        });
-    }
+    roomStack.update(deltaTime);
 
     Timer.update(deltaTime);
 
