@@ -1,22 +1,21 @@
 import { gfx, setGameSize, clear, loadImages } from "./graphics.js";
 import { images, maps } from "./assets.js";
-import { loadMapDefs, TiledMap } from "./tiled_map.js";
+import { loadMapDefs } from "./tiled_map.js";
 import { input } from "./input.js";
 import { musicManager } from "./musicManager";
 import { Timer } from "./timer.js";
 import { roomStack } from "./game.js";
+
+import { TestRoom } from "./testroom.js";
 
 setGameSize(800, 600);
 
 gfx.fillText("Loading...", gfx.width / 2, gfx.height / 2);
 
 let prevTime = performance.now();
-let testmap = null;
 
 function init() {
-    testmap = new TiledMap('gloomcastle');
-
-    // TODO: Add a room to the roomStack
+    roomStack.push(new TestRoom());
 }
 
 function update() {
@@ -27,8 +26,6 @@ function update() {
 
     input.update();
     musicManager.update(deltaTime);
-
-    testmap.draw();
 
     roomStack.update(deltaTime);
 
