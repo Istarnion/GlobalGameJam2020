@@ -14,10 +14,12 @@ gfx.fillText("Loading...", gfx.width / 2, gfx.height / 2);
 
 let prevTime = performance.now();
 
+// THis is run once all assets are loaded. Called from the bottom of this file
 function init() {
     roomStack.push(new TestRoom());
 }
 
+// Called every frame, starting straight after init() is run.
 function update() {
     clear();
     const now = performance.now();
@@ -35,6 +37,7 @@ function update() {
     input.lateUpdate();
 }
 
+// Create list of images to load in proper format
 const imagesToLoad = [];
 for(const img in images) {
     if(images.hasOwnProperty(img)) {
@@ -42,6 +45,7 @@ for(const img in images) {
     }
 }
 
+// Start loading all assets, call init() when done, then start the game loop
 Promise.all([loadMapDefs(maps), loadImages(imagesToLoad)]).then(() => {
     init();
     update(); // This starts the update loop
