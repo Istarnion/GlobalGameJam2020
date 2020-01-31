@@ -55,6 +55,20 @@ export class Player extends GameObject {
             this.moveY(this.fall_speed * dt);
         }
 
+        const foottile = this.tileAt(this.x, this.y);
+        if(foottile === STAIRS_LEFT || foottile === STAIRS_RIGHT) {
+            const base_y = Math.floor(this.y / this.map.tile_height) * this.map.tile_height;
+            const t = (this.x % this.map.tile_width) / this.map.tile_width;
+            // console.log(base_y, t);
+
+            if(foottile === STAIRS_LEFT) {
+                this.y = Math.floor(base_y + this.map.tile_height * t)-1;
+            }
+            else {
+                this.y = Math.floor(base_y + (this.map.tile_height-1) * (1-t))-1;
+            }
+        }
+
         // Draw
         gfx.fillStyle = 'white';
         gfx.fillRect(this.x-this.width/2, this.y-this.height, this.width, this.height);
