@@ -1,16 +1,15 @@
-import {Howl, Howler } from "./howler.min.js";
+import { Howl } from 'howler';
 
 class MusicManager {
     constructor() {
-        // EXAMPLE:
-        /*
+        this.music = {}
         this.music.startDrone = new Howl({
-                src: ['res/sounds/BassDrone_Start.mp3'],
-                onend: () => {
-                    this.music.loopDrone.play();
+                src: ['res/sounds/Menu_Loop.mp3'],
+                loop: true,
+                onload: () => {
+                    this.music.startDrone.play();
                 }
         });
-        */
     }
 
     update(deltaTime) {
