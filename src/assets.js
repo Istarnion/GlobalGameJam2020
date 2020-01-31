@@ -2,7 +2,7 @@ export const images = {
     // EXAMPLE:
     // menuBG: "res/sprites/MenuScreenBackground.png",
     // Test
-    gloomdungeon_side: "res/testtiles.png"
+    testtiles: "res/testtiles.png"
 };
 
 export const animations = {
