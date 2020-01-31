@@ -1,4 +1,5 @@
 import { Room, Arena } from "./game.js";
+import { TiledMap } from "./tiled_map.js";
 import { Player } from "./player.js";
 
 const STATE_PLATFORMING = 0;
@@ -9,13 +10,15 @@ export class GameRoom extends Room {
     constructor() {
         super();
         this.state = STATE_PLATFORMING;
-        this.map = null;
+        this.map = new TiledMap("testmap");
         this.arena = new Arena();
 
         this.arena.add(new Player(this));
     }
 
     update(dt) {
+        this.map.draw();
+
         switch(this.state) {
             case STATE_PLATFORMING:
                 // Do nothing special, I think
