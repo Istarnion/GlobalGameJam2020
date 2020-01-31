@@ -23,7 +23,7 @@ function init() {
 function update() {
     clear();
     const now = performance.now();
-    const deltaTime = (now - prevTime) / 1000.0;
+    const deltaTime = Math.min(0.0333, (now - prevTime) / 1000.0);
     prevTime = now;
 
     input.update();

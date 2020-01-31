@@ -2,6 +2,10 @@ import { GameObject } from "./game.js";
 import { gfx } from "./graphics.js";
 import { input } from "./input.js";
 
+const MAX_FALL_SPEED = 128;
+
+const collision_layer = 0;
+
 export class Player extends GameObject {
     constructor(game) {
         super();
@@ -12,6 +16,7 @@ export class Player extends GameObject {
         this.map = game.map;
 
         this.speed = 48;
+        this.fall_speed = 0;
 
         // TODO: Get x and y from map
         this.x = gfx.width/2;
@@ -36,6 +41,17 @@ export class Player extends GameObject {
         }
 
         // TODO: Gravity
+        if(this.collidesAt(this.x, this.y+1)) {
+            this.fall_speed = 0;
+        }
+        else {
+            this.fall_speed += 4;
+            if(this.fall_speed > MAX_FALL_SPEED) {
+                this.fall_speed = MAX_FALL_SPEED;
+            }
+        }
+
+        this.moveY(this.fall_speed * dt);
 
         // Draw
         gfx.fillStyle = 'white';
@@ -69,7 +85,7 @@ export class Player extends GameObject {
             const sign = Math.sign(move);
 
             while(move != 0) {
-                if(!collidesAt(this.x, this.y + sign)) {
+                if(!this.collidesAt(this.x, this.y + sign)) {
                     this.y += sign;
                     move -= sign;
                 }
@@ -79,8 +95,14 @@ export class Player extends GameObject {
     }
 
     collidesAt(x, y) {
-        return false;
-        // TODO: Handle collision with map
+        const tile = this.tileAt(x, y);
+        return tile > 1;
+    }
+
+    tileAt(x, y) {
+        const index = (x / this.map.tile_width) + (y / this.map.tile_height) * this.map.width;
+        const tile = this.map.layers[collision_layer].tiles[index];
+        return tile;
     }
 }
 
