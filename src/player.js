@@ -4,7 +4,9 @@ import { input } from "./input.js";
 
 const MAX_FALL_SPEED = 128;
 
-const collision_layer = 0;
+const COLLISION_LAYER = 0;
+const STAIRS_LEFT = 2;
+const STAIRS_RIGHT = 3;
 
 export class Player extends GameObject {
     constructor(game) {
@@ -101,14 +103,13 @@ export class Player extends GameObject {
 
     collidesAt(x, y) {
         const tile = this.tileAt(x, y);
-        if(tile === undefined) debugger;
-        return tile > 1;
+        return tile !== 0 && tile !== STAIRS_LEFT && tile !== STAIRS_RIGHT;
     }
 
     tileAt(x, y) {
         const index = Math.floor(x / this.map.tile_width) +
                       Math.floor(y / this.map.tile_height) * this.map.width;
-        const tile = this.map.layers[collision_layer].tiles[index];
+        const tile = this.map.layers[COLLISION_LAYER].tiles[index];
         return tile;
     }
 }
