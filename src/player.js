@@ -40,8 +40,8 @@ export class Player extends GameObject {
             this.moveX(movement_x * this.speed * dt);
         }
 
-        // TODO: Gravity
-        if(this.collidesAt(this.x, this.y+1)) {
+        if(this.collidesAt(this.x-this.width/2, this.y+1) ||
+           this.collidesAt(this.x+this.width/2, this.y+1)) {
             this.fall_speed = 0;
         }
         else {
@@ -49,24 +49,29 @@ export class Player extends GameObject {
             if(this.fall_speed > MAX_FALL_SPEED) {
                 this.fall_speed = MAX_FALL_SPEED;
             }
-        }
 
-        this.moveY(this.fall_speed * dt);
+            this.moveY(this.fall_speed * dt);
+        }
 
         // Draw
         gfx.fillStyle = 'white';
         gfx.fillRect(this.x-this.width/2, this.y-this.height, this.width, this.height);
+
+        if(input.isKeyDown('q')) {
+            gfx.fillStyle = 'rgba(255, 0, 255, 0.5)';
+            gfx.fillRect(this.x-this.width/2, this.y-this.height, this.width, this.height);
+        }
     }
 
     moveX(amount) {
         this.remainder_x += amount;
         let move = Math.round(this.remainder_x);
 
-        if(move != 0) {
+        if(move !== 0) {
             this.remainder_x -= move;
             const sign = Math.sign(move);
 
-            while(move != 0) {
+            while(move !== 0) {
                 if(!this.collidesAt(this.x + sign, this.y)) {
                     this.x += sign;
                     move -= sign;
@@ -80,11 +85,11 @@ export class Player extends GameObject {
         this.remainder_y += amount;
         let move = Math.round(this.remainder_y);
 
-        if(move != 0) {
+        if(move !== 0) {
             this.remainder_y -= move;
             const sign = Math.sign(move);
 
-            while(move != 0) {
+            while(move !== 0) {
                 if(!this.collidesAt(this.x, this.y + sign)) {
                     this.y += sign;
                     move -= sign;
@@ -96,11 +101,13 @@ export class Player extends GameObject {
 
     collidesAt(x, y) {
         const tile = this.tileAt(x, y);
+        if(tile === undefined) debugger;
         return tile > 1;
     }
 
     tileAt(x, y) {
-        const index = (x / this.map.tile_width) + (y / this.map.tile_height) * this.map.width;
+        const index = Math.floor(x / this.map.tile_width) +
+                      Math.floor(y / this.map.tile_height) * this.map.width;
         const tile = this.map.layers[collision_layer].tiles[index];
         return tile;
     }
