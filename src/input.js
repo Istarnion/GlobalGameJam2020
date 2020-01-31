@@ -10,6 +10,7 @@ export const input = {
     },
 
     isKeyJustPressed: function(key) {
+        if(!this.keyStates[key]) return false;
         const result =
             this.keyStates[key][0] &&
             !this.keyStates[key][1];
@@ -126,6 +127,10 @@ export const input = {
     keyStates: {
         space: [false, false],
         enter: [false, false],
+        w: [false, false],
+        s: [false, false],
+        a: [false, false],
+        d: [false, false],
         up: [false, false],
         down: [false, false],
         left: [false, false],
