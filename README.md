@@ -1,4 +1,4 @@
-# Global Game Jam 2018
+# Global Game Jam 2020
 
 *NOTE* Some work has been done post jam. Please see the timestamps on the commit history if you are interested in the game as it was after 48 hours of development.
 
@@ -6,7 +6,7 @@
 You need npm and an up-to-date modern browser.
 
 ```
-git pull https://github.com/Istarnion/GlobalGameJam2020.git
+git clone https://github.com/Istarnion/GlobalGameJam2020.git
 cd GlobalGameJam2020
 npm install
 ```
