@@ -2,7 +2,7 @@ export const images = {
     // EXAMPLE:
     // menuBG: "res/sprites/MenuScreenBackground.png",
     // Test
-    gloomdungeon_side: "res/gloomdungeon_side.png"
+    gloomdungeon_side: "res/testtiles.png"
 };
 
 export const animations = {
@@ -27,6 +27,6 @@ export const maps = {
     overworld: "res/maps/overworld.json"
     */
     // Test
-    gloomcastle: "res/gloomcastle.json"
+    gloomcastle: "res/testmap.json"
 };
 
