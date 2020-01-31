@@ -27,6 +27,6 @@ export const maps = {
     overworld: "res/maps/overworld.json"
     */
     // Test
-    gloomcastle: "res/testmap.json"
+    testmap: "res/testmap.json"
 };
 
