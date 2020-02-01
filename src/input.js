@@ -1,6 +1,7 @@
 export const input = {
     mouse_x: 0,
     mouse_y: 0,
+    mouse_down: false,
     keyDownListeners: [],
     specificKeyDownListeners: {},
     keyUpListeners: [],
@@ -191,6 +192,18 @@ canvas.addEventListener("mousemove", (e) => {
     const client_rect = canvas.getClientRects()[0];
     input.mouse_x = (e.clientX - client_rect.x) * scale;
     input.mouse_y = (e.clientY - client_rect.y) * scale;
+    return false;
+});
+
+canvas.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    input.mouse_down = true;
+    return false;
+});
+
+window.addEventListener("mouseup", (e) => {
+    e.preventDefault();
+    input.mouse_down = false;
     return false;
 });
 
