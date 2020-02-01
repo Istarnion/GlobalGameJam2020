@@ -24,6 +24,7 @@ export class Player extends GameObject {
         this.state = states.PLATFORMING;
 
         this.inventory = [null];
+        this.active_inventory_slot = null;
         this.held_tile = null;
         this.held_tile_collision = null;
 
@@ -153,13 +154,22 @@ export class Player extends GameObject {
             if(input.isKeyJustPressed('mouse')) {
                 if(this.held_tile === null) {
                     // Try pick up tile
-                    this.inventory[0] = [
-                        this.map.layers[0].tiles[tile_index],
-                        this.map.layers[COLLISION_LAYER].tiles[tile_index]
-                    ];
+                    let first_open_inventory_slot = 0;
+                    for(let i=0; i<this.inventory.length; ++i) {
+                        if(this.inventory[i] !== null) {
+                            ++first_open_inventory_slot;
+                        }
+                    }
 
-                    this.map.layers[0].tiles[tile_index] = 0;
-                    this.map.layers[COLLISION_LAYER].tiles[tile_index] = 0;
+                    if(first_open_inventory_slot < this.inventory.length) {
+                        this.inventory[first_open_inventory_slot] = [
+                            this.map.layers[0].tiles[tile_index],
+                            this.map.layers[COLLISION_LAYER].tiles[tile_index]
+                        ];
+
+                        this.map.layers[0].tiles[tile_index] = 0;
+                        this.map.layers[COLLISION_LAYER].tiles[tile_index] = 0;
+                    }
                 }
                 else {
                     this.map.layers[0].tiles[tile_index] = this.held_tile;
@@ -167,31 +177,25 @@ export class Player extends GameObject {
 
                     this.held_tile = null;
                     this.held_tile_collision = null;
-                    this.inventory[0] = null;
+                    this.inventory[this.active_inventory_slot] = null;
+                    this.active_inventory_slot = null;
                 }
             }
 
-            gfx.globalAlpha = 0.5;
             if(this.held_tile === null) {
-                gfx.fillStyle = 'rgba(0, 255, 0)';
-                gfx.fillRect(tile_x*this.map.tile_width, tile_y*this.map.tile_height,
-                             this.map.tile_width, this.map.tile_height);
+                gfx.drawImage(sprites['misc'], 0, 16, 16, 16, mouse_x-8, mouse_y-8, 16, 16);
             }
             else {
+                gfx.globalAlpha = 0.5;
                 this.map.tileset.drawTile(this.held_tile,
                                           tile_x*this.map.tile_width, tile_y*this.map.tile_height);
+                gfx.globalAlpha = 1.0;
             }
-
-            gfx.globalAlpha = 1.0;
 
             // Do ipad animations
 
             if(input.isKeyJustPressed('e')) {
                 this.state = states.PLATFORMING;
-            }
-            else if(input.isKeyJustPressed('one')) {
-                this.held_tile = this.inventory[0][0];
-                this.held_tile_collision = this.inventory[0][1];
             }
         }
 
@@ -212,6 +216,24 @@ export class Player extends GameObject {
 
         for(var i=0; i<this.inventory.length; ++i) {
             hud_x += 18;
+
+            if(input.isKeyJustPressed('mouse')) {
+                if(input.mouse_x > hud_x && input.mouse_x <= hud_x+16 &&
+                   input.mouse_y > hud_y && input.mouse_y <= hud_y+16)
+                {
+                    if(this.inventory[i] === null) {
+                        this.held_tile = null;
+                        this.held_tile_collision = null;
+                        this.active_inventory_slot = null;
+                    }
+                    else {
+                        this.held_tile = this.inventory[i][0];
+                        this.held_tile_collision = this.inventory[i][1];
+                        this.active_inventory_slot = i;
+                    }
+                }
+            }
+
             gfx.drawImage(sprites['misc'], 0, 0, 16, 16, hud_x, hud_y, 16, 16);
 
             if(this.inventory[i] !== null) {
@@ -236,6 +258,12 @@ export class Player extends GameObject {
                 gfx.drawImage(sprites['misc'],
                               src_x, 0, 16, 16,
                               hud_x, hud_y, 16, 16);
+
+                if(this.active_inventory_slot === i) {
+                    gfx.drawImage(sprites['misc'],
+                                  0, 16, 16, 16,
+                                  hud_x, hud_y, 16, 16);
+                }
             }
         }
     }
