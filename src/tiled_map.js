@@ -116,6 +116,14 @@ export class TiledMap {
 
         gfx.globalAlpha = 1.0;
     }
+
+    clampX(x) {
+        return x - x % this.tile_width;
+    }
+
+    clampY(y) {
+        return y - y % this.tile_height;
+    }
 }
 
 export function loadMapDefs(maps) {

@@ -10,6 +10,7 @@ export const items = {
             52,
             52
         ],
+        pickup_tile: 23,
         icon_x: 16,
         icon_y: 0
     },
@@ -20,6 +21,7 @@ export const items = {
         ],
         collision_layer: [
         ],
+        pickup_tile: 23,
         icon_x: 16,
         icon_y: 0
     },
@@ -34,6 +36,7 @@ export const items = {
             3, 0,
             1, 3
         ],
+        pickup_tile: 23,
         icon_x: 16,
         icon_y: 0
     },
@@ -48,6 +51,7 @@ export const items = {
             0, 2,
             2, 1
         ],
+        pickup_tile: 23,
         icon_x: 16,
         icon_y: 0
     }

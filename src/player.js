@@ -204,6 +204,7 @@ export class Player extends GameObject {
 
                         this.inventory[first_open_inventory_slot] = item;
 
+                        // REMOVE ITEM
                         const tile_indices_to_remove = [tile_index];
                         const tile_index_deltas_to_check = [ -1, 1, -2, 2, -this.map.width, this.map.width ];
                         for(const td of tile_index_deltas_to_check) {
@@ -213,18 +214,31 @@ export class Player extends GameObject {
                         }
 
                         for(const i of tile_indices_to_remove) {
-                            this.map.layers[0].tiles[i] = 0;
+                            this.map.layers[TILE_LAYER].tiles[i] = 0;
                             this.map.layers[COLLISION_LAYER].tiles[i] = 0;
                             this.map.layers[PICKUP_LAYER].tiles[i] = 49;
                         }
                     }
                 }
                 else {
-                    // TODO: Place item
+                    // PLACE ITEM
+                    const leftmost = this.map.clampX(mouse_x - Math.floor(this.held_item.width/2) * this.map.tile_width) / this.map.tile_width;
+                    const topmost = this.map.clampY(mouse_y - Math.floor(this.held_item.height/2) * this.map.tile_height) / this.map.tile_height;
+
+                    for(let y=0; y<this.held_item.height; ++y) {
+                        for(let x=0; x<this.held_item.width; ++x) {
+                            const local_index = x + y * this.held_item.width;
+                            const i = (leftmost+x) + (topmost+y) * this.map.width
+                            this.map.layers[TILE_LAYER].tiles[i] = this.held_item.tile_layer[local_index];
+                            this.map.layers[COLLISION_LAYER].tiles[i] = this.held_item.collision_layer[local_index];
+                            this.map.layers[PICKUP_LAYER].tiles[i] = this.held_item.pickup_tile;
+                        }
+                    }
 
                     this.held_item = null;
                     this.inventory[this.active_inventory_slot] = null;
                     this.active_inventory_slot = null;
+                    this.state = states.PLATFORMING;
                 }
             }
 
@@ -233,22 +247,27 @@ export class Player extends GameObject {
             }
             else {
                 gfx.globalAlpha = 0.5;
-                // TODO: Draw item ghost
+                // ITEM GHOST
+                const leftmost = this.map.clampX(mouse_x - Math.floor(this.held_item.width/2) * this.map.tile_width);
+                const topmost = this.map.clampY(mouse_y - Math.floor(this.held_item.height/2) * this.map.tile_height);
                 for(let y=0; y<this.held_item.height; ++y) {
                     for(let x=0; x<this.held_item.width; ++x) {
-
+                        this.map.tileset.drawTile(this.held_item.tile_layer[x+y*this.held_item.width],
+                                                  leftmost+x*this.map.tile_width,
+                                                  topmost+y*this.map.tile_height);
                     }
                 }
-                this.map.tileset.drawTile(this.held_tile,
-                                          tile_x*this.map.tile_width, tile_y*this.map.tile_height);
+
                 gfx.globalAlpha = 1.0;
             }
 
-            // Do ipad animations
+            // Do ipad animations enter and exit
             this.curr_anim = this.ipad_lookat_anim;
 
             if(input.isKeyJustPressed('e')) {
                 this.state = states.PLATFORMING;
+                this.active_inventory_slot = null;
+                this.held_item = null;
             }
         }
 
@@ -270,7 +289,7 @@ export class Player extends GameObject {
         for(var i=0; i<this.inventory.length; ++i) {
             hud_x += 18;
 
-            if(input.isKeyJustPressed('mouse')) {
+            if(this.state === states.TILE_PLACING && input.isKeyJustPressed('mouse')) {
                 if(input.mouse_x > hud_x && input.mouse_x <= hud_x+16 &&
                    input.mouse_y > hud_y && input.mouse_y <= hud_y+16)
                 {
