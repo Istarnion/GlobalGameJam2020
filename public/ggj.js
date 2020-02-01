@@ -3522,7 +3522,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-Object(_graphics_js__WEBPACK_IMPORTED_MODULE_0__["setGameSize"])(640, 480);
+Object(_graphics_js__WEBPACK_IMPORTED_MODULE_0__["setGameSize"])(320, 240);
 _graphics_js__WEBPACK_IMPORTED_MODULE_0__["gfx"].fillText("Loading...", _graphics_js__WEBPACK_IMPORTED_MODULE_0__["gfx"].width / 2, _graphics_js__WEBPACK_IMPORTED_MODULE_0__["gfx"].height / 2);
 var prevTime = performance.now(); // THis is run once all assets are loaded. Called from the bottom of this file
 
@@ -3616,8 +3616,8 @@ var maps = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "camera", function() { return camera; });
-var WIDTH = 640;
-var HEIGHT = 480;
+var WIDTH = 320;
+var HEIGHT = 240;
 var camera = {
   x: 0,
   y: 0,
