@@ -54,7 +54,6 @@ export class Player extends GameObject {
             if(this.fall_speed > MAX_FALL_SPEED) {
                 this.fall_speed = MAX_FALL_SPEED;
             }
-
         }
 
         const foottile = this.tileAt(this.x, this.y);
@@ -133,11 +132,24 @@ export class Player extends GameObject {
     }
 
     collidesAt(x, y) {
-        const tile = this.tileAt(x, y);
-        return tile !== 0 &&
+        const tiles = [
+            this.tileAt(x-this.width/2, y-this.height),
+            this.tileAt(x+this.width/2, y-this.height),
+            this.tileAt(x-this.width/2, y),
+            this.tileAt(x+this.width/2, y)
+        ];
+
+        for(var i=0; i<tiles.length; ++i) {
+            const tile = tiles[i];
+            if(tile !== 0 &&
                tile !== STAIRS_LEFT &&
                tile !== STAIRS_RIGHT &&
-               tile !== LADDER;
+               tile !== LADDER) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     tileAt(x, y) {
