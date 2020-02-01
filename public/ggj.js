@@ -3807,7 +3807,8 @@ __webpack_require__.r(__webpack_exports__);
 var images = {
   character: "res/Character.png",
   FlisesettGGJ2020: "res/FlisesettGGJ2020.png",
-  misc: "res/SparkleInventoryAndStuff.png"
+  misc: "res/SparkleInventoryAndStuff.png",
+  scroll: "res/InventoryScroll.png"
 };
 var animations = {
   player_idle: {
@@ -4032,6 +4033,42 @@ var animations = {
     }, {
       x: 112,
       y: 0,
+      w: 16,
+      h: 16
+    }]
+  },
+  pickup_sparkle: {
+    image: "misc",
+    timePerFrame: 0.1,
+    looping: 'loop',
+    frames: [{
+      x: 32,
+      y: 16,
+      w: 16,
+      h: 16
+    }, {
+      x: 48,
+      y: 16,
+      w: 16,
+      h: 16
+    }, {
+      x: 64,
+      y: 16,
+      w: 16,
+      h: 16
+    }, {
+      x: 80,
+      y: 16,
+      w: 16,
+      h: 16
+    }, {
+      x: 96,
+      y: 16,
+      w: 16,
+      h: 16
+    }, {
+      x: 112,
+      y: 16,
       w: 16,
       h: 16
     }]
@@ -5018,6 +5055,72 @@ var musicManager = new MusicManager();
 
 /***/ }),
 
+/***/ "./src/pickup_effect.js":
+/*!******************************!*\
+  !*** ./src/pickup_effect.js ***!
+  \******************************/
+/*! exports provided: PickupEffect */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PickupEffect", function() { return PickupEffect; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _game_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./game.js */ "./src/game.js");
+/* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
+/* harmony import */ var _animation_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./animation.js */ "./src/animation.js");
+
+
+
+
+
+
+
+
+var PickupEffect =
+/*#__PURE__*/
+function (_GameObject) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default()(PickupEffect, _GameObject);
+
+  function PickupEffect(x, y) {
+    var _this;
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, PickupEffect);
+
+    _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(PickupEffect).call(this));
+    _this.x = x - 8;
+    _this.y = y - 8;
+    _this.animation = new _animation_js__WEBPACK_IMPORTED_MODULE_7__["Animation"]('pickup_sparkle');
+
+    _this.animation.addCycleListener(function () {
+      _this.die();
+    });
+
+    return _this;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(PickupEffect, [{
+    key: "update",
+    value: function update(dt) {
+      this.animation.update(dt);
+      this.animation.draw(this.x, this.y);
+    }
+  }]);
+
+  return PickupEffect;
+}(_game_js__WEBPACK_IMPORTED_MODULE_5__["GameObject"]);
+
+/***/ }),
+
 /***/ "./src/player.js":
 /*!***********************!*\
   !*** ./src/player.js ***!
@@ -5045,6 +5148,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _animation_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./animation.js */ "./src/animation.js");
 /* harmony import */ var _inventory_item_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./inventory_item.js */ "./src/inventory_item.js");
 /* harmony import */ var _block_fade_effect_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./block_fade_effect.js */ "./src/block_fade_effect.js");
+/* harmony import */ var _pickup_effect_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pickup_effect.js */ "./src/pickup_effect.js");
+
 
 
 
@@ -5117,6 +5222,7 @@ function (_GameObject) {
     _this.falling_anim.anchor_x = 0.5;
     _this.falling_anim.anchor_y = 1.0;
     _this.sparkle_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('sparkle');
+    _this.pickup_sparkle_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('pickup_sparkle');
     _this.curr_anim = _this.idle_anim;
     _this.game = game;
     _this.map = game.map;
@@ -5214,6 +5320,7 @@ function (_GameObject) {
             }
 
             this.map.layers[0].tiles[centertile_index] = 0;
+            this.game.arena.add(new _pickup_effect_js__WEBPACK_IMPORTED_MODULE_12__["PickupEffect"](this.x, this.y));
           }
         }
 
@@ -5223,28 +5330,17 @@ function (_GameObject) {
         if (can_open_ipad && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
           this.state = states.TILE_PLACING;
         }
-
-        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
-          var tile_x = Math.floor((_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].x) / this.map.tile_width);
-          var tile_y = Math.floor((_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].y) / this.map.tile_height);
-          var tile_index = tile_x + tile_y * this.map.width;
-          var collision_tile = this.map.layers[COLLISION_LAYER].tiles[tile_index];
-          console.log(tile_x, tile_y, tile_index, collision_tile);
-        }
       } else {
         var mouse_x = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].x;
         var mouse_y = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].y;
-
-        var _tile_x = Math.floor(mouse_x / this.map.tile_width);
-
-        var _tile_y = Math.floor(mouse_y / this.map.tile_height);
-
-        var _tile_index = _tile_x + _tile_y * this.map.width;
+        var tile_x = Math.floor(mouse_x / this.map.tile_width);
+        var tile_y = Math.floor(mouse_y / this.map.tile_height);
+        var tile_index = tile_x + tile_y * this.map.width;
 
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
           if (this.active_inventory_slot === null) {
             // Try pick up tile
-            var pickup_layer_tile = this.map.layers[PICKUP_LAYER].tiles[_tile_index];
+            var pickup_layer_tile = this.map.layers[PICKUP_LAYER].tiles[tile_index];
             var can_pickup = pickup_layer_tile !== 0 && pickup_layer_tile !== 65;
             var first_open_inventory_slot = 0;
 
@@ -5288,7 +5384,7 @@ function (_GameObject) {
 
               this.inventory[first_open_inventory_slot] = item; // REMOVE ITEM
 
-              var tile_indices_to_remove = [_tile_index];
+              var tile_indices_to_remove = [tile_index];
               var tile_index_deltas_to_check = [];
 
               for (var y = 0; y < item.height; ++y) {
@@ -5303,8 +5399,8 @@ function (_GameObject) {
               for (var _i = 0, _tile_index_deltas_to = tile_index_deltas_to_check; _i < _tile_index_deltas_to.length; _i++) {
                 var td = _tile_index_deltas_to[_i];
 
-                if (this.map.layers[PICKUP_LAYER].tiles[_tile_index + td] === pickup_layer_tile) {
-                  tile_indices_to_remove.push(_tile_index + td);
+                if (this.map.layers[PICKUP_LAYER].tiles[tile_index + td] === pickup_layer_tile) {
+                  tile_indices_to_remove.push(tile_index + td);
                 }
               }
 
@@ -5414,12 +5510,18 @@ function (_GameObject) {
   }, {
     key: "updateHUD",
     value: function updateHUD() {
+      var scroll_x = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / 2 - (this.inventory.length + 1) * 24 / 2;
       var hud_x = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / 2 - (this.inventory.length + 1) * 18 / 2;
-      var hud_y = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height - 20;
+      var hud_y = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height - 20; // Scroll left edge
+
+      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['scroll'], 0, 0, 24, 24, scroll_x - 24, hud_y - 4, 24, 24);
+      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['scroll'], 24, 0, 24, 24, scroll_x, hud_y - 4, 24, 24);
       _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['FlisesettGGJ2020'], 32, 32, 16, 16, hud_x, hud_y, 16, 16);
 
       for (var i = 0; i < this.inventory.length; ++i) {
         hud_x += 18;
+        scroll_x += 24;
+        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['scroll'], 24, 0, 24, 24, scroll_x, hud_y - 4, 24, 24);
 
         if (this.state === states.TILE_PLACING && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
           if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x > hud_x && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x <= hud_x + 16 && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y > hud_y && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y <= hud_y + 16) {
@@ -5434,6 +5536,9 @@ function (_GameObject) {
         }
 
         _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 0, 16, 16, hud_x, hud_y, 16, 16);
+        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillStyle = 'red';
+        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].font = '8px Arial';
+        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillText((i + 1).toString(), hud_x + 5, hud_y + 17);
 
         if (this.inventory[i] !== null) {
           _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], this.inventory[i].icon_x, this.inventory[i].icon_y, 16, 16, hud_x, hud_y, 16, 16);
@@ -5442,8 +5547,10 @@ function (_GameObject) {
             _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 16, 16, 16, hud_x, hud_y, 16, 16);
           }
         }
-      } // Keyboard shortcuts for inventory
+      } // Scroll right edge
 
+
+      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['scroll'], 48, 0, 24, 24, scroll_x + 24, hud_y - 4, 24, 24); // Keyboard shortcuts for inventory
 
       if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('one') && this.inventory[0] !== null) {
         this.held_item = this.inventory[0];

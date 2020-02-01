@@ -1,7 +1,8 @@
 export const images = {
     character: "res/Character.png",
     FlisesettGGJ2020: "res/FlisesettGGJ2020.png",
-    misc: "res/SparkleInventoryAndStuff.png"
+    misc: "res/SparkleInventoryAndStuff.png",
+    scroll: "res/InventoryScroll.png"
 };
 
 export const animations = {
@@ -114,6 +115,19 @@ export const animations = {
             { x: 112, y: 0, w: 16, h: 16 },
         ]
     },
+    pickup_sparkle: {
+        image: "misc",
+        timePerFrame: 0.1,
+        looping: 'loop',
+        frames: [
+            { x:   32, y: 16, w: 16, h: 16 },
+            { x:   48, y: 16, w: 16, h: 16 },
+            { x:   64, y: 16, w: 16, h: 16 },
+            { x:   80, y: 16, w: 16, h: 16 },
+            { x:   96, y: 16, w: 16, h: 16 },
+            { x:  112, y: 16, w: 16, h: 16 }
+        ]
+    }
 };
 
 export const maps = {

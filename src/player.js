@@ -5,6 +5,7 @@ import { camera } from "./camera.js";
 import { Animation } from "./animation.js";
 import { items } from "./inventory_item.js";
 import { BlockFadeEffect } from "./block_fade_effect.js";
+import { PickupEffect } from "./pickup_effect.js";
 
 const MAX_FALL_SPEED = 128;
 const WALK_SPEED = 52
@@ -73,6 +74,7 @@ export class Player extends GameObject {
         this.falling_anim.anchor_y = 1.0;
 
         this.sparkle_anim = new Animation('sparkle');
+        this.pickup_sparkle_anim = new Animation('pickup_sparkle');
 
         this.curr_anim = this.idle_anim;
 
@@ -173,6 +175,7 @@ export class Player extends GameObject {
                     }
 
                     this.map.layers[0].tiles[centertile_index] = 0;
+                    this.game.arena.add(new PickupEffect(this.x, this.y));
                 }
             }
 
@@ -182,14 +185,6 @@ export class Player extends GameObject {
 
             if(can_open_ipad && input.isKeyJustPressed('e')) {
                 this.state = states.TILE_PLACING;
-            }
-
-            if(input.isKeyJustPressed('mouse')) {
-                const tile_x = Math.floor((input.mouse_x+camera.x) / this.map.tile_width);
-                const tile_y = Math.floor((input.mouse_y+camera.y) / this.map.tile_height);
-                const tile_index = tile_x + tile_y * this.map.width;
-                const collision_tile = this.map.layers[COLLISION_LAYER].tiles[tile_index];
-                console.log(tile_x, tile_y, tile_index, collision_tile);
             }
         }
         else {
@@ -369,12 +364,21 @@ export class Player extends GameObject {
     }
 
     updateHUD() {
+
+        let scroll_x = gfx.width/2 - (this.inventory.length+1) * 24 / 2;
         let hud_x = gfx.width/2 - (this.inventory.length+1) * 18 / 2;
         const hud_y = gfx.height - 20;
+
+        // Scroll left edge
+        gfx.drawImage(sprites['scroll'], 0, 0, 24, 24, scroll_x-24, hud_y-4, 24, 24);
+        gfx.drawImage(sprites['scroll'], 24, 0, 24, 24, scroll_x, hud_y-4, 24, 24);
+
         gfx.drawImage(sprites['FlisesettGGJ2020'], 32, 32, 16, 16, hud_x, hud_y, 16, 16);
 
         for(var i=0; i<this.inventory.length; ++i) {
             hud_x += 18;
+            scroll_x += 24;
+            gfx.drawImage(sprites['scroll'], 24, 0, 24, 24, scroll_x, hud_y-4, 24, 24);
 
             if(this.state === states.TILE_PLACING && input.isKeyJustPressed('mouse')) {
                 if(input.mouse_x > hud_x && input.mouse_x <= hud_x+16 &&
@@ -392,6 +396,9 @@ export class Player extends GameObject {
             }
 
             gfx.drawImage(sprites['misc'], 0, 0, 16, 16, hud_x, hud_y, 16, 16);
+            gfx.fillStyle = 'red';
+            gfx.font = '8px Arial';
+            gfx.fillText((i+1).toString(), hud_x+5, hud_y+17);
 
             if(this.inventory[i] !== null) {
                 gfx.drawImage(sprites['misc'],
@@ -406,6 +413,9 @@ export class Player extends GameObject {
                 }
             }
         }
+
+        // Scroll right edge
+        gfx.drawImage(sprites['scroll'], 48, 0, 24, 24, scroll_x + 24, hud_y-4, 24, 24);
 
         // Keyboard shortcuts for inventory
         if(input.isKeyJustPressed('one') && this.inventory[0] !== null) {
