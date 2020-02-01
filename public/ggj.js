@@ -4274,6 +4274,12 @@ function (_Room) {
       var mouse_y = _input_js__WEBPACK_IMPORTED_MODULE_11__["input"].mouse_y + _camera_js__WEBPACK_IMPORTED_MODULE_10__["camera"].y;
       var tile_x = Math.floor(mouse_x / this.map.tile_width);
       var tile_y = Math.floor(mouse_y / this.map.tile_height);
+      var tile_index = tile_x + tile_y * this.map.width;
+
+      if (_input_js__WEBPACK_IMPORTED_MODULE_11__["input"].isKeyJustPressed('mouse')) {
+        this.map.layers[0].tiles[tile_index] = 1;
+      }
+
       _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].fillStyle = 'rgba(0, 255, 0, 0.5)';
       _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].fillRect(tile_x * this.map.tile_width, tile_y * this.map.tile_height, this.map.tile_width, this.map.tile_height);
     }
@@ -4669,7 +4675,8 @@ var input = {
     e: [false, false],
     one: [false, false],
     two: [false, false],
-    three: [false, false]
+    three: [false, false],
+    mouse: [false, false]
   }
 };
 
@@ -4765,6 +4772,17 @@ canvas.addEventListener("mousemove", function (e) {
   var client_rect = canvas.getClientRects()[0];
   input.mouse_x = (e.clientX - client_rect.x) * scale;
   input.mouse_y = (e.clientY - client_rect.y) * scale;
+  return false;
+});
+canvas.addEventListener("mousedown", function (e) {
+  e.preventDefault();
+  input.mouse_down = true;
+  input.keyStates['mouse'][0] = true;
+  return false;
+});
+window.addEventListener("mouseup", function (e) {
+  e.preventDefault();
+  input.keyStates['mouse'][0] = false;
   return false;
 });
 

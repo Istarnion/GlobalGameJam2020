@@ -50,6 +50,11 @@ export class GameRoom extends Room {
 
         const tile_x = Math.floor(mouse_x / this.map.tile_width);
         const tile_y = Math.floor(mouse_y / this.map.tile_height);
+        const tile_index = tile_x + tile_y * this.map.width;
+
+        if(input.isKeyJustPressed('mouse')) {
+            this.map.layers[0].tiles[tile_index] = 1;
+        }
 
         gfx.fillStyle = 'rgba(0, 255, 0, 0.5)';
         gfx.fillRect(tile_x*this.map.tile_width, tile_y*this.map.tile_height,
