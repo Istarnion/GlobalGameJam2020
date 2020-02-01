@@ -5298,16 +5298,26 @@ function (_GameObject) {
 
             var can_place = true;
 
+            for (var _y = 0; _y < this.held_item.height && can_place; ++_y) {
+              for (var _x = 0; _x < this.held_item.width && can_place; ++_x) {
+                var _i4 = _leftmost + _x + (_topmost + _y) * this.map.width;
+
+                if (this.map.layers[PICKUP_LAYER].tiles[_i4] !== 65) {
+                  can_place = false;
+                }
+              }
+            }
+
             if (can_place) {
-              for (var _y = 0; _y < this.held_item.height; ++_y) {
-                for (var _x = 0; _x < this.held_item.width; ++_x) {
-                  var local_index = _x + _y * this.held_item.width;
+              for (var _y2 = 0; _y2 < this.held_item.height; ++_y2) {
+                for (var _x2 = 0; _x2 < this.held_item.width; ++_x2) {
+                  var local_index = _x2 + _y2 * this.held_item.width;
 
-                  var _i4 = _leftmost + _x + (_topmost + _y) * this.map.width;
+                  var _i5 = _leftmost + _x2 + (_topmost + _y2) * this.map.width;
 
-                  this.map.layers[TILE_LAYER].tiles[_i4] = this.held_item.tile_layer[local_index];
-                  this.map.layers[COLLISION_LAYER].tiles[_i4] = this.held_item.collision_layer[local_index];
-                  this.map.layers[PICKUP_LAYER].tiles[_i4] = this.held_item.pickup_tile;
+                  this.map.layers[TILE_LAYER].tiles[_i5] = this.held_item.tile_layer[local_index];
+                  this.map.layers[COLLISION_LAYER].tiles[_i5] = this.held_item.collision_layer[local_index];
+                  this.map.layers[PICKUP_LAYER].tiles[_i5] = this.held_item.pickup_tile;
                 }
               }
 
@@ -5328,9 +5338,9 @@ function (_GameObject) {
 
           var _topmost2 = this.map.clampY(mouse_y - Math.floor(this.held_item.height / 2) * this.map.tile_height);
 
-          for (var _y2 = 0; _y2 < this.held_item.height; ++_y2) {
-            for (var _x2 = 0; _x2 < this.held_item.width; ++_x2) {
-              this.map.tileset.drawTile(this.held_item.tile_layer[_x2 + _y2 * this.held_item.width], _leftmost2 + _x2 * this.map.tile_width, _topmost2 + _y2 * this.map.tile_height);
+          for (var _y3 = 0; _y3 < this.held_item.height; ++_y3) {
+            for (var _x3 = 0; _x3 < this.held_item.width; ++_x3) {
+              this.map.tileset.drawTile(this.held_item.tile_layer[_x3 + _y3 * this.held_item.width], _leftmost2 + _x3 * this.map.tile_width, _topmost2 + _y3 * this.map.tile_height);
             }
           }
 
@@ -5354,12 +5364,12 @@ function (_GameObject) {
         var bottommost = Math.min(this.map.height - 1, topmost + tiles_down);
         this.sparkle_anim.update(dt);
 
-        for (var _y3 = topmost; _y3 < bottommost; ++_y3) {
-          for (var _x3 = leftmost; _x3 < rightmost; ++_x3) {
-            var index = _x3 + _y3 * this.map.width;
+        for (var _y4 = topmost; _y4 < bottommost; ++_y4) {
+          for (var _x4 = leftmost; _x4 < rightmost; ++_x4) {
+            var index = _x4 + _y4 * this.map.width;
 
             if (this.map.layers[PICKUP_LAYER].tiles[index] !== 0) {
-              this.sparkle_anim.draw(_x3 * this.map.tile_width, _y3 * this.map.tile_height);
+              this.sparkle_anim.draw(_x4 * this.map.tile_width, _y4 * this.map.tile_height);
             }
           }
         }

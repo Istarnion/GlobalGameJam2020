@@ -252,6 +252,15 @@ export class Player extends GameObject {
 
                     // CHECK IF CAN PLACE
                     let can_place = true;
+                    for(let y=0; y<this.held_item.height&&can_place; ++y) {
+                        for(let x=0; x<this.held_item.width&&can_place; ++x) {
+                            const i = (leftmost+x) + (topmost+y) * this.map.width
+
+                            if(this.map.layers[PICKUP_LAYER].tiles[i] !== 65) {
+                                can_place = false;
+                            }
+                        }
+                    }
 
                     if(can_place) {
                         for(let y=0; y<this.held_item.height; ++y) {
