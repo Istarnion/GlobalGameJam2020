@@ -77,6 +77,7 @@ export class Player extends GameObject {
         this.pickup_sparkle_anim = new Animation('pickup_sparkle');
 
         this.curr_anim = this.idle_anim;
+        this.can_open_ipad = true;
 
         this.game = game;
         this.map = game.map;
@@ -114,13 +115,13 @@ export class Player extends GameObject {
                 this.curr_anim = this.idle_anim;
             }
 
-            let can_open_ipad = true;
+            this.can_open_ipad = true;
 
             if(this.collidesAt(this.x, this.y+1)) {
                 this.fall_speed = 0;
             }
             else {
-                can_open_ipad = false;
+                this.can_open_ipad = false;
                 this.fall_speed += 4;
                 if(this.fall_speed > MAX_FALL_SPEED) {
                     this.fall_speed = MAX_FALL_SPEED;
@@ -131,7 +132,7 @@ export class Player extends GameObject {
 
             const foottile = this.tileAt(this.x, this.y);
             if(foottile === STAIRS_LEFT || foottile === STAIRS_RIGHT) {
-                can_open_ipad = true;
+                this.can_open_ipad = true;
                 const base_y = Math.floor(this.y / this.map.tile_height) * this.map.tile_height;
 
                 if(foottile === STAIRS_LEFT) {
@@ -144,7 +145,7 @@ export class Player extends GameObject {
                 }
             }
             else if(foottile === LADDER) {
-                can_open_ipad = false;
+                this.can_open_ipad = false;
                 this.fall_speed = 0;
 
                 if(input.isKeyDown('up', 'w')) {
@@ -183,7 +184,7 @@ export class Player extends GameObject {
 
             camera.target(this.x, this.y);
 
-            if(can_open_ipad && input.isKeyJustPressed('e')) {
+            if(this.can_open_ipad && input.isKeyJustPressed('e')) {
                 this.state = states.TILE_PLACING;
             }
         }
@@ -418,28 +419,30 @@ export class Player extends GameObject {
         gfx.drawImage(sprites['scroll'], 48, 0, 24, 24, scroll_x + 24, hud_y-4, 24, 24);
 
         // Keyboard shortcuts for inventory
-        if(input.isKeyJustPressed('one') && this.inventory[0] !== null) {
-            this.held_item = this.inventory[0];
-            this.active_inventory_slot = 0;
-            this.state = states.TILE_PLACING;
-        }
+        if(this.can_open_ipad) {
+            if(input.isKeyJustPressed('one') && this.inventory[0] !== null) {
+                this.held_item = this.inventory[0];
+                this.active_inventory_slot = 0;
+                this.state = states.TILE_PLACING;
+            }
 
-        if(input.isKeyJustPressed('two') && this.inventory.length >= 2 && this.inventory[1] !== null) {
-            this.held_item = this.inventory[1];
-            this.active_inventory_slot = 1;
-            this.state = states.TILE_PLACING;
-        }
+            if(input.isKeyJustPressed('two') && this.inventory.length >= 2 && this.inventory[1] !== null) {
+                this.held_item = this.inventory[1];
+                this.active_inventory_slot = 1;
+                this.state = states.TILE_PLACING;
+            }
 
-        if(input.isKeyJustPressed('three') && this.inventory.length >= 3 && this.inventory[2] !== null) {
-            this.held_item = this.inventory[2];
-            this.active_inventory_slot = 2;
-            this.state = states.TILE_PLACING;
-        }
+            if(input.isKeyJustPressed('three') && this.inventory.length >= 3 && this.inventory[2] !== null) {
+                this.held_item = this.inventory[2];
+                this.active_inventory_slot = 2;
+                this.state = states.TILE_PLACING;
+            }
 
-        if(input.isKeyJustPressed('four') && this.inventory.length >= 4 && this.inventory[3] !== null) {
-            this.held_item = this.inventory[3];
-            this.active_inventory_slot = 3;
-            this.state = states.TILE_PLACING;
+            if(input.isKeyJustPressed('four') && this.inventory.length >= 4 && this.inventory[3] !== null) {
+                this.held_item = this.inventory[3];
+                this.active_inventory_slot = 3;
+                this.state = states.TILE_PLACING;
+            }
         }
     }
 
