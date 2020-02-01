@@ -1,14 +1,18 @@
 import { gfx, sprites } from "./graphics.js";
 import { getPropertyOrDefault, requireProperty } from "./utils.js";
 import { Directions } from "./utils.js";
+import { animations } from "./assets.js";
 
 export class Animation {
 
-    constructor(def) {
+    constructor(name) {
+        const def = animations[name];
         const image = requireProperty(def, "image");
         this.spriteSheet = sprites[image];
         this.timePerFrame = getPropertyOrDefault(def, "timePerFrame", 0.5);
         this.looping = getPropertyOrDefault(def, "looping", "once");
+        this.anchor_x = 0;
+        this.anchor_y = 0;
 
         this.frames = [];
 
@@ -103,27 +107,11 @@ export class Animation {
         }
     }
 
-    draw(x, y, offsetX = 0, offsetY = 0, dir = Directions.up) {
-        gfx.save();
-        gfx.translate(48+x*32+16+offsetX, 12+y*32+16+offsetY);
-
-        switch(dir) {
-            case Directions.up: break;
-            case Directions.right:
-                gfx.rotate(Math.PI / 2)
-                break;
-            case Directions.down:
-                gfx.rotate(Math.PI);
-                break;
-            case Directions.left:
-                gfx.rotate(Math.PI / -2);
-                break;
-        }
-
+    draw(x, y) {
         const frame = this.frames[this.currentFrame];
-        gfx.drawImage(this.spriteSheet, frame.x, frame.y, frame.w, frame.h, -16, -16, 32, 32);
-
-        gfx.restore();
+        x -= frame.w * this.anchor_x;
+        y -= frame.h * this.anchor_y;
+        gfx.drawImage(this.spriteSheet, frame.x, frame.y, frame.w, frame.h, x, y, frame.w, frame.h);
     }
 
     reset() {

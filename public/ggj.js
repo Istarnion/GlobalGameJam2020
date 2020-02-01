@@ -3497,6 +3497,237 @@ var ajax = {
 
 /***/ }),
 
+/***/ "./src/animation.js":
+/*!**************************!*\
+  !*** ./src/animation.js ***!
+  \**************************/
+/*! exports provided: Animation */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Animation", function() { return Animation; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
+/* harmony import */ var _assets_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./assets.js */ "./src/assets.js");
+
+
+
+
+
+
+var Animation =
+/*#__PURE__*/
+function () {
+  function Animation(name) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Animation);
+
+    var def = _assets_js__WEBPACK_IMPORTED_MODULE_4__["animations"][name];
+    var image = Object(_utils_js__WEBPACK_IMPORTED_MODULE_3__["requireProperty"])(def, "image");
+    this.spriteSheet = _graphics_js__WEBPACK_IMPORTED_MODULE_2__["sprites"][image];
+    this.timePerFrame = Object(_utils_js__WEBPACK_IMPORTED_MODULE_3__["getPropertyOrDefault"])(def, "timePerFrame", 0.5);
+    this.looping = Object(_utils_js__WEBPACK_IMPORTED_MODULE_3__["getPropertyOrDefault"])(def, "looping", "once");
+    this.anchor_x = 0;
+    this.anchor_y = 0;
+    this.frames = [];
+
+    if (typeof def.frames === "number") {
+      // Animation strip
+      var frameWidth = this.spriteSheet.width / def.frames;
+      var frameHeight = this.spriteSheet.height;
+
+      for (var i = 0; i < def.frames; ++i) {
+        this.frames.push({
+          x: i * frameWidth,
+          y: 0,
+          w: frameWidth,
+          h: frameHeight
+        });
+      }
+    } else if (!!def.frames.x && !!def.frames.y) {
+      // Sprite sheet
+      var framesAcross = def.frames.x;
+      var framesDown = def.frames.y;
+      var marginX = Object(_utils_js__WEBPACK_IMPORTED_MODULE_3__["getPropertyOrDefault"])(def.frames, "mx", 0);
+      var marginY = Object(_utils_js__WEBPACK_IMPORTED_MODULE_3__["getPropertyOrDefault"])(def.frames, "my", 0);
+      var spacingX = Object(_utils_js__WEBPACK_IMPORTED_MODULE_3__["getPropertyOrDefault"])(def.frames, "sx", 0);
+      var spacingY = Object(_utils_js__WEBPACK_IMPORTED_MODULE_3__["getPropertyOrDefault"])(def.frames, "sy", 0);
+
+      var _frameWidth = (this.spriteSheet.width - marginX - framesAcross * spacingX) / framesAcross;
+
+      var _frameHeight = (this.spriteSheet.height - marginY - framesDown * spacingY) / framesDown;
+
+      for (var _i = 0; _i < framesDown; ++_i) {
+        for (var j = 0; j < framesAcross; ++j) {
+          this.frames.push({
+            x: marginX + j * (_frameWidth + spacingX),
+            y: marginY + _i * (_frameHeight + spacingY),
+            w: _frameWidth,
+            h: _frameHeight
+          });
+        }
+      }
+    } else {
+      // Array of frames
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = def.frames[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var frame = _step.value;
+          this.frames.push(frame);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+
+    this.cycleListeners = [];
+    this.frameListeners = [];
+    this.timeOnCurrentFrame = 0;
+    this.currentFrame = 0;
+    this.paused = false;
+    this.direction = 1;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Animation, [{
+    key: "update",
+    value: function update(deltaTime) {
+      if (!this.paused) {
+        this.timeOnCurrentFrame += deltaTime;
+
+        if (this.timeOnCurrentFrame >= this.timePerFrame) {
+          this.timeOnCurrentFrame = 0;
+          this.currentFrame += this.direction;
+
+          if (this.direction !== 0) {
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+              for (var _iterator2 = this.frameListeners[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                var listener = _step2.value;
+                listener(this.currentFrame, this);
+              }
+            } catch (err) {
+              _didIteratorError2 = true;
+              _iteratorError2 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                  _iterator2["return"]();
+                }
+              } finally {
+                if (_didIteratorError2) {
+                  throw _iteratorError2;
+                }
+              }
+            }
+          }
+
+          if (this.currentFrame >= this.numFrames || this.currentFrame < 0) {
+            // NOTE(istarnion): We support animating bot ways, in all modes.
+            switch (this.looping) {
+              case "once":
+                this.currentFrame -= this.direction;
+                this.direction = 0;
+                break;
+
+              case "loop":
+                this.currentFrame -= this.direction;
+                this.currentFrame = this.numFrames - 1 - this.currentFrame;
+                break;
+
+              case "ping-pong":
+                if (this.currentFrame < 0) this.currentFrame = 0;else if (this.currentFrame >= this.numFrames) this.currentFrame = this.numFrames - 1;
+                this.currentFrame -= this.direction;
+                this.direction *= -1;
+                break;
+            }
+
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+              for (var _iterator3 = this.cycleListeners[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                var _listener = _step3.value;
+
+                _listener(this);
+              }
+            } catch (err) {
+              _didIteratorError3 = true;
+              _iteratorError3 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+                  _iterator3["return"]();
+                }
+              } finally {
+                if (_didIteratorError3) {
+                  throw _iteratorError3;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }, {
+    key: "draw",
+    value: function draw(x, y) {
+      var frame = this.frames[this.currentFrame];
+      x -= frame.w * this.anchor_x;
+      y -= frame.h * this.anchor_y;
+      _graphics_js__WEBPACK_IMPORTED_MODULE_2__["gfx"].drawImage(this.spriteSheet, frame.x, frame.y, frame.w, frame.h, x, y, frame.w, frame.h);
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      this.currentFrame = 0;
+      this.timeOnCurrentFrame = 0;
+      this.paused = false;
+      this.direction = 1;
+    }
+  }, {
+    key: "addCycleListener",
+    value: function addCycleListener(listener) {
+      this.cycleListeners.push(listener);
+    }
+  }, {
+    key: "addFrameListener",
+    value: function addFrameListener(listener) {
+      this.frameListeners.push(listener);
+    }
+  }, {
+    key: "numFrames",
+    get: function get() {
+      return this.frames.length;
+    }
+  }]);
+
+  return Animation;
+}();
+
+/***/ }),
+
 /***/ "./src/app.js":
 /*!********************!*\
   !*** ./src/app.js ***!
@@ -3577,10 +3808,171 @@ var images = {
   // EXAMPLE:
   // menuBG: "res/sprites/MenuScreenBackground.png",
   // Test
-  testtiles: "res/testtiles.png"
+  testtiles: "res/testtiles.png",
+  character: "res/Character.png"
 };
-var animations = {// EXAMPLE
-
+var animations = {
+  // EXAMPLE
+  player_idle: {
+    image: "character",
+    timePerFrame: 0.1,
+    looping: 'loop',
+    frames: [{
+      x: 0,
+      y: 0,
+      w: 16,
+      h: 16
+    }, {
+      x: 16,
+      y: 0,
+      w: 16,
+      h: 16
+    }, {
+      x: 32,
+      y: 0,
+      w: 16,
+      h: 16
+    }, {
+      x: 48,
+      y: 0,
+      w: 16,
+      h: 16
+    }]
+  },
+  player_walk_right: {
+    image: "character",
+    timePerFrame: 0.1,
+    looping: 'loop',
+    frames: [{
+      x: 0,
+      y: 16,
+      w: 16,
+      h: 16
+    }, {
+      x: 16,
+      y: 16,
+      w: 16,
+      h: 16
+    }, {
+      x: 32,
+      y: 16,
+      w: 16,
+      h: 16
+    }, {
+      x: 48,
+      y: 16,
+      w: 16,
+      h: 16
+    }]
+  },
+  player_walk_left: {
+    image: "character",
+    timePerFrame: 0.1,
+    looping: 'loop',
+    frames: [{
+      x: 0,
+      y: 32,
+      w: 16,
+      h: 16
+    }, {
+      x: 16,
+      y: 32,
+      w: 16,
+      h: 16
+    }, {
+      x: 32,
+      y: 32,
+      w: 16,
+      h: 16
+    }, {
+      x: 48,
+      y: 32,
+      w: 16,
+      h: 16
+    }]
+  },
+  player_ipad_open: {
+    image: "character",
+    timePerFrame: 0.1,
+    looping: 'once',
+    frames: []
+  },
+  player_ipad_look: {
+    image: "character",
+    timePerFrame: 0.1,
+    looping: 'loop',
+    frames: []
+  },
+  player_ipad_close: {
+    image: "character",
+    timePerFrame: 0.1,
+    looping: 'once',
+    frames: []
+  },
+  player_climbing: {
+    image: "character",
+    timePerFrame: 0.1,
+    looping: 'loop',
+    frames: [{
+      x: 0,
+      y: 80,
+      w: 16,
+      h: 16
+    }, {
+      x: 16,
+      y: 80,
+      w: 16,
+      h: 16
+    }, {
+      x: 32,
+      y: 80,
+      w: 16,
+      h: 16
+    }, {
+      x: 48,
+      y: 80,
+      w: 16,
+      h: 16
+    }, {
+      x: 64,
+      y: 80,
+      w: 16,
+      h: 16
+    }, {
+      x: 80,
+      y: 80,
+      w: 16,
+      h: 16
+    }]
+  },
+  player_falling: {
+    image: "character",
+    timePerFrame: 0.1,
+    looping: 'loop',
+    frames: [{
+      x: 0,
+      y: 96,
+      w: 16,
+      h: 16
+    }, {
+      x: 16,
+      y: 96,
+      w: 16,
+      h: 16
+    }]
+  },
+  player_sleep: {
+    image: "character",
+    timePerFrame: 0.1,
+    looping: 'loop',
+    frames: []
+  },
+  player_confused: {
+    image: "character",
+    timePerFrame: 0.1,
+    looping: 'loop',
+    frames: []
+  }
   /*
   block: {
       image: "block",
@@ -3593,6 +3985,7 @@ var animations = {// EXAMPLE
       ]
   }
   */
+
 };
 var maps = {
   // EXAMPLE
@@ -4476,6 +4869,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
 /* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
 /* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./camera.js */ "./src/camera.js");
+/* harmony import */ var _animation_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./animation.js */ "./src/animation.js");
+
 
 
 
@@ -4503,7 +4898,23 @@ function (_GameObject) {
 
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(Player).call(this));
     _this.width = 12;
-    _this.height = 24;
+    _this.height = 12;
+    _this.idle_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_idle');
+    _this.idle_anim.anchor_x = 0.5;
+    _this.idle_anim.anchor_y = 1.0;
+    _this.walk_right_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_walk_right');
+    _this.walk_right_anim.anchor_x = 0.5;
+    _this.walk_right_anim.anchor_y = 1.0;
+    _this.walk_left_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_walk_left');
+    _this.walk_left_anim.anchor_x = 0.5;
+    _this.walk_left_anim.anchor_y = 1.0;
+    _this.climbing_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_climbing');
+    _this.climbing_anim.anchor_x = 0.5;
+    _this.climbing_anim.anchor_y = 1.0;
+    _this.falling_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_falling');
+    _this.falling_anim.anchor_x = 0.5;
+    _this.falling_anim.anchor_y = 1.0;
+    _this.curr_anim = _this.idle_anim;
     _this.game = game;
     _this.map = game.map;
     _this.speed = 48;
@@ -4531,6 +4942,14 @@ function (_GameObject) {
 
       if (Math.abs(movement_x) > 0) {
         this.moveX(movement_x * this.speed * dt);
+
+        if (movement_x > 0) {
+          this.curr_anim = this.walk_right_anim;
+        } else {
+          this.curr_anim = this.walk_left_anim;
+        }
+      } else {
+        this.curr_anim = this.idle_anim;
       }
 
       if (this.collidesAt(this.x - this.width / 2, this.y + 1) || this.collidesAt(this.x + this.width / 2, this.y + 1)) {
@@ -4541,6 +4960,8 @@ function (_GameObject) {
         if (this.fall_speed > MAX_FALL_SPEED) {
           this.fall_speed = MAX_FALL_SPEED;
         }
+
+        this.curr_anim = this.falling_anim;
       }
 
       var foottile = this.tileAt(this.x, this.y);
@@ -4564,13 +4985,15 @@ function (_GameObject) {
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('down', 's')) {
           this.fall_speed = CLIMB_SPEED;
         }
+
+        this.curr_anim = this.climbing_anim;
       }
 
       this.moveY(this.fall_speed * dt);
       _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].target(this.x, this.y); // Draw
 
-      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillStyle = 'white';
-      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillRect(this.x - this.width / 2, this.y - this.height, this.width, this.height);
+      this.curr_anim.update(dt);
+      this.curr_anim.draw(this.x, this.y);
 
       if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('q')) {
         _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillStyle = 'rgba(255, 0, 255, 0.5)';
@@ -4616,8 +5039,17 @@ function (_GameObject) {
   }, {
     key: "collidesAt",
     value: function collidesAt(x, y) {
-      var tile = this.tileAt(x, y);
-      return tile !== 0 && tile !== STAIRS_LEFT && tile !== STAIRS_RIGHT && tile !== LADDER;
+      var tiles = [this.tileAt(x - this.width / 2, y - this.height), this.tileAt(x + this.width / 2, y - this.height), this.tileAt(x - this.width / 2, y), this.tileAt(x + this.width / 2, y)];
+
+      for (var i = 0; i < tiles.length; ++i) {
+        var tile = tiles[i];
+
+        if (tile !== 0 && tile !== STAIRS_LEFT && tile !== STAIRS_RIGHT && tile !== LADDER) {
+          return true;
+        }
+      }
+
+      return false;
     }
   }, {
     key: "tileAt",

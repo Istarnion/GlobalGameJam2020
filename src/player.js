@@ -2,6 +2,7 @@ import { GameObject } from "./game.js";
 import { gfx } from "./graphics.js";
 import { input } from "./input.js";
 import { camera } from "./camera.js";
+import { Animation } from "./animation.js";
 
 const MAX_FALL_SPEED = 128;
 const CLIMB_SPEED = 24;
@@ -15,7 +16,29 @@ export class Player extends GameObject {
     constructor(game) {
         super();
         this.width = 12;
-        this.height = 24;
+        this.height = 12;
+
+        this.idle_anim = new Animation('player_idle');
+        this.idle_anim.anchor_x = 0.5;
+        this.idle_anim.anchor_y = 1.0;
+
+        this.walk_right_anim = new Animation('player_walk_right');
+        this.walk_right_anim.anchor_x = 0.5;
+        this.walk_right_anim.anchor_y = 1.0;
+
+        this.walk_left_anim = new Animation('player_walk_left');
+        this.walk_left_anim.anchor_x = 0.5;
+        this.walk_left_anim.anchor_y = 1.0;
+
+        this.climbing_anim = new Animation('player_climbing');
+        this.climbing_anim.anchor_x = 0.5;
+        this.climbing_anim.anchor_y = 1.0;
+
+        this.falling_anim = new Animation('player_falling');
+        this.falling_anim.anchor_x = 0.5;
+        this.falling_anim.anchor_y = 1.0;
+
+        this.curr_anim = this.idle_anim;
 
         this.game = game;
         this.map = game.map;
@@ -43,6 +66,15 @@ export class Player extends GameObject {
 
         if(Math.abs(movement_x) > 0) {
             this.moveX(movement_x * this.speed * dt);
+            if(movement_x > 0) {
+                this.curr_anim = this.walk_right_anim;
+            }
+            else {
+                this.curr_anim = this.walk_left_anim;
+            }
+        }
+        else {
+            this.curr_anim = this.idle_anim;
         }
 
         if(this.collidesAt(this.x-this.width/2, this.y+1) ||
@@ -54,6 +86,8 @@ export class Player extends GameObject {
             if(this.fall_speed > MAX_FALL_SPEED) {
                 this.fall_speed = MAX_FALL_SPEED;
             }
+
+            this.curr_anim = this.falling_anim;
         }
 
         const foottile = this.tileAt(this.x, this.y);
@@ -79,6 +113,8 @@ export class Player extends GameObject {
             if(input.isKeyDown('down', 's')) {
                 this.fall_speed = CLIMB_SPEED;
             }
+
+            this.curr_anim = this.climbing_anim;
         }
 
         this.moveY(this.fall_speed * dt);
@@ -86,8 +122,8 @@ export class Player extends GameObject {
         camera.target(this.x, this.y);
 
         // Draw
-        gfx.fillStyle = 'white';
-        gfx.fillRect(this.x-this.width/2, this.y-this.height, this.width, this.height);
+        this.curr_anim.update(dt);
+        this.curr_anim.draw(this.x, this.y);
 
         if(input.isKeyDown('q')) {
             gfx.fillStyle = 'rgba(255, 0, 255, 0.5)';
