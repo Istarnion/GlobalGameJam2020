@@ -56,6 +56,7 @@ export class Player extends GameObject {
     }
 
     update(dt) {
+
         if(this.game.state == states.PLATFORMING) {
             let movement_x = 0;
             if(input.isKeyDown('a', 'left')) {
@@ -79,10 +80,13 @@ export class Player extends GameObject {
                 this.curr_anim = this.idle_anim;
             }
 
+            let can_open_ipad = true;
+
             if(this.collidesAt(this.x, this.y+1)) {
                 this.fall_speed = 0;
             }
             else {
+                can_open_ipad = false;
                 this.fall_speed += 4;
                 if(this.fall_speed > MAX_FALL_SPEED) {
                     this.fall_speed = MAX_FALL_SPEED;
@@ -93,6 +97,7 @@ export class Player extends GameObject {
 
             const foottile = this.tileAt(this.x, this.y);
             if(foottile === STAIRS_LEFT || foottile === STAIRS_RIGHT) {
+                can_open_ipad = true;
                 const base_y = Math.floor(this.y / this.map.tile_height) * this.map.tile_height;
 
                 if(foottile === STAIRS_LEFT) {
@@ -105,6 +110,7 @@ export class Player extends GameObject {
                 }
             }
             else if(foottile === LADDER) {
+                can_open_ipad = false;
                 this.fall_speed = 0;
 
                 if(input.isKeyDown('up', 'w')) {
@@ -121,9 +127,17 @@ export class Player extends GameObject {
             this.moveY(this.fall_speed * dt);
 
             camera.target(this.x, this.y);
+
+            if(can_open_ipad && input.isKeyJustPressed('e')) {
+                this.game.state = states.TILE_PLACING;
+            }
         }
         else {
             // Do ipad animations
+            //
+            if(input.isKeyJustPressed('e')) {
+                this.game.state = states.PLATFORMING;
+            }
         }
 
         // Draw

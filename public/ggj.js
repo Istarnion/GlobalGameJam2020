@@ -4182,11 +4182,12 @@ var roomStack = new RoomStack();
 /*!**************************!*\
   !*** ./src/game_room.js ***!
   \**************************/
-/*! exports provided: GameRoom */
+/*! exports provided: states, GameRoom */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "states", function() { return states; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GameRoom", function() { return GameRoom; });
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
@@ -4205,6 +4206,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _player_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./player.js */ "./src/player.js");
 /* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
 /* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./camera.js */ "./src/camera.js");
+/* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
 
 
 
@@ -4216,8 +4218,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var STATE_PLATFORMING = 0;
-var STATE_TILE_PLACING = 1;
+
+var states = {
+  PLATFORMING: 0,
+  TILE_PLACING: 1
+};
 var GameRoom =
 /*#__PURE__*/
 function (_Room) {
@@ -4229,7 +4234,7 @@ function (_Room) {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, GameRoom);
 
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(GameRoom).call(this));
-    _this.state = STATE_PLATFORMING;
+    _this.state = states.PLATFORMING;
     _this.map = new _tiled_map_js__WEBPACK_IMPORTED_MODULE_7__["TiledMap"]("testmap");
     _this.arena = new _game_js__WEBPACK_IMPORTED_MODULE_6__["Arena"]();
 
@@ -4246,12 +4251,12 @@ function (_Room) {
       this.map.draw();
 
       switch (this.state) {
-        case STATE_PLATFORMING:
+        case states.PLATFORMING:
           // Do nothing special, I think
           break;
 
-        case STATE_TILE_PLACING:
-          updateTilePlacing(dt);
+        case states.TILE_PLACING:
+          this.updateTilePlacing(dt);
           break;
 
         default:
@@ -4264,7 +4269,13 @@ function (_Room) {
     }
   }, {
     key: "updateTilePlacing",
-    value: function updateTilePlacing(dt) {// TODO(ole): PLZ
+    value: function updateTilePlacing(dt) {
+      var mouse_x = _input_js__WEBPACK_IMPORTED_MODULE_11__["input"].mouse_x + _camera_js__WEBPACK_IMPORTED_MODULE_10__["camera"].x;
+      var mouse_y = _input_js__WEBPACK_IMPORTED_MODULE_11__["input"].mouse_y + _camera_js__WEBPACK_IMPORTED_MODULE_10__["camera"].y;
+      var tile_x = Math.floor(mouse_x / this.map.tile_width);
+      var tile_y = Math.floor(mouse_y / this.map.tile_height);
+      _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].fillStyle = 'rgba(0, 255, 0, 0.5)';
+      _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].fillRect(tile_x * this.map.tile_width, tile_y * this.map.tile_height, this.map.tile_width, this.map.tile_height);
     }
   }]);
 
@@ -4452,6 +4463,8 @@ var getBitmap = function getBitmap(image) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "input", function() { return input; });
 var input = {
+  mouse_x: 0,
+  mouse_y: 0,
   keyDownListeners: [],
   specificKeyDownListeners: {},
   keyUpListeners: [],
@@ -4745,6 +4758,15 @@ window.addEventListener("keyup", function (e) {
     input.keyStates[key][0] = false;
   }
 });
+var canvas = document.getElementById('game-canvas');
+canvas.addEventListener("mousemove", function (e) {
+  e.preventDefault();
+  var scale = 320 / canvas.clientWidth;
+  var client_rect = canvas.getClientRects()[0];
+  input.mouse_x = (e.clientX - client_rect.x) * scale;
+  input.mouse_y = (e.clientY - client_rect.y) * scale;
+  return false;
+});
 
 /***/ }),
 
@@ -4847,6 +4869,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
 /* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./camera.js */ "./src/camera.js");
 /* harmony import */ var _animation_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./animation.js */ "./src/animation.js");
+/* harmony import */ var _game_room_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./game_room.js */ "./src/game_room.js");
+
 
 
 
@@ -4907,69 +4931,87 @@ function (_GameObject) {
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Player, [{
     key: "update",
     value: function update(dt) {
-      var movement_x = 0;
+      if (this.game.state == _game_room_js__WEBPACK_IMPORTED_MODULE_10__["states"].PLATFORMING) {
+        var movement_x = 0;
 
-      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('a', 'left')) {
-        movement_x -= 1;
-      }
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('a', 'left')) {
+          movement_x -= 1;
+        }
 
-      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('d', 'right')) {
-        movement_x += 1;
-      }
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('d', 'right')) {
+          movement_x += 1;
+        }
 
-      if (Math.abs(movement_x) > 0) {
-        this.moveX(movement_x * this.speed * dt);
+        if (Math.abs(movement_x) > 0) {
+          this.moveX(movement_x * this.speed * dt);
 
-        if (movement_x > 0) {
-          this.curr_anim = this.walk_right_anim;
+          if (movement_x > 0) {
+            this.curr_anim = this.walk_right_anim;
+          } else {
+            this.curr_anim = this.walk_left_anim;
+          }
         } else {
-          this.curr_anim = this.walk_left_anim;
+          this.curr_anim = this.idle_anim;
+        }
+
+        var can_open_ipad = true;
+
+        if (this.collidesAt(this.x, this.y + 1)) {
+          this.fall_speed = 0;
+        } else {
+          can_open_ipad = false;
+          this.fall_speed += 4;
+
+          if (this.fall_speed > MAX_FALL_SPEED) {
+            this.fall_speed = MAX_FALL_SPEED;
+          }
+
+          this.curr_anim = this.falling_anim;
+        }
+
+        var foottile = this.tileAt(this.x, this.y);
+
+        if (foottile === STAIRS_LEFT || foottile === STAIRS_RIGHT) {
+          can_open_ipad = true;
+          var base_y = Math.floor(this.y / this.map.tile_height) * this.map.tile_height;
+
+          if (foottile === STAIRS_LEFT) {
+            var t = (this.x - this.width / 2) % this.map.tile_width / this.map.tile_width;
+            this.y = Math.floor(base_y + this.map.tile_height * t) - 2;
+          } else {
+            var _t = (this.x + this.width / 2) % this.map.tile_width / this.map.tile_width;
+
+            this.y = Math.floor(base_y + (this.map.tile_height - 1) * (1 - _t)) - 2;
+          }
+        } else if (foottile === LADDER) {
+          can_open_ipad = false;
+          this.fall_speed = 0;
+
+          if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('up', 'w')) {
+            this.fall_speed = -CLIMB_SPEED;
+          }
+
+          if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('down', 's')) {
+            this.fall_speed = CLIMB_SPEED;
+          }
+
+          this.curr_anim = this.climbing_anim;
+        }
+
+        this.moveY(this.fall_speed * dt);
+        _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].target(this.x, this.y);
+
+        if (can_open_ipad && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
+          this.game.state = _game_room_js__WEBPACK_IMPORTED_MODULE_10__["states"].TILE_PLACING;
         }
       } else {
-        this.curr_anim = this.idle_anim;
-      }
-
-      if (this.collidesAt(this.x, this.y + 1)) {
-        this.fall_speed = 0;
-      } else {
-        this.fall_speed += 4;
-
-        if (this.fall_speed > MAX_FALL_SPEED) {
-          this.fall_speed = MAX_FALL_SPEED;
+        // Do ipad animations
+        //
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
+          this.game.state = _game_room_js__WEBPACK_IMPORTED_MODULE_10__["states"].PLATFORMING;
         }
+      } // Draw
 
-        this.curr_anim = this.falling_anim;
-      }
-
-      var foottile = this.tileAt(this.x, this.y);
-
-      if (foottile === STAIRS_LEFT || foottile === STAIRS_RIGHT) {
-        var base_y = Math.floor(this.y / this.map.tile_height) * this.map.tile_height;
-
-        if (foottile === STAIRS_LEFT) {
-          var t = (this.x - this.width / 2) % this.map.tile_width / this.map.tile_width;
-          this.y = Math.floor(base_y + this.map.tile_height * t) - 2;
-        } else {
-          var _t = (this.x + this.width / 2) % this.map.tile_width / this.map.tile_width;
-
-          this.y = Math.floor(base_y + (this.map.tile_height - 1) * (1 - _t)) - 2;
-        }
-      } else if (foottile === LADDER) {
-        this.fall_speed = 0;
-
-        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('up', 'w')) {
-          this.fall_speed = -CLIMB_SPEED;
-        }
-
-        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('down', 's')) {
-          this.fall_speed = CLIMB_SPEED;
-        }
-
-        this.curr_anim = this.climbing_anim;
-      }
-
-      this.moveY(this.fall_speed * dt);
-      _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].target(this.x, this.y); // Draw
 
       this.curr_anim.update(dt);
       this.curr_anim.draw(this.x, this.y);

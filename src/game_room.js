@@ -41,15 +41,6 @@ export class GameRoom extends Room {
 
         this.arena.update(dt);
 
-        if(input.isKeyJustPressed('e')) {
-            if(this.state === states.PLATFORMING) {
-                this.state = states.TILE_PLACING;
-            }
-            else {
-                this.state = states.PLATFORMING;
-            }
-        }
-
         gfx.restore();
     }
 
