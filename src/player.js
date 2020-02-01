@@ -1,6 +1,7 @@
 import { GameObject } from "./game.js";
 import { gfx } from "./graphics.js";
 import { input } from "./input.js";
+import { camera } from "./camera.js";
 
 const MAX_FALL_SPEED = 128;
 
@@ -68,6 +69,8 @@ export class Player extends GameObject {
                 this.y = Math.floor(base_y + (this.map.tile_height-1) * (1-t))-1;
             }
         }
+
+        camera.target(this.x, this.y);
 
         // Draw
         gfx.fillStyle = 'white';

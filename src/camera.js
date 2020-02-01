@@ -8,8 +8,8 @@ export const camera = {
 };
 
 camera.target = (x, y) => {
-    camera.x = x;
-    camera.y = y;
+    camera.x = x-320;
+    camera.y = y-240;
 };
 
 camera.setBounds = (left, right, top, bottom) => {
