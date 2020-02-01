@@ -3,14 +3,19 @@ import { gfx, sprites } from "./graphics.js";
 import { input } from "./input.js";
 import { camera } from "./camera.js";
 import { Animation } from "./animation.js";
+import { items } from "./inventory_item.js";
 
 const MAX_FALL_SPEED = 128;
 const CLIMB_SPEED = 24;
 
+const TILE_LAYER = 0;
 const COLLISION_LAYER = 1;
-const STAIRS_RIGHT = 50;
-const STAIRS_LEFT = 51;
-const LADDER = 52;
+const PICKUP_LAYER = 2;
+
+const STAIRS_RIGHT = 66;
+const STAIRS_LEFT = 67;
+const LADDER = 68;
+const BACKPACK = 19;
 
 const states = {
     PLATFORMING: 0,
@@ -25,8 +30,7 @@ export class Player extends GameObject {
 
         this.inventory = [null];
         this.active_inventory_slot = null;
-        this.held_tile = null;
-        this.held_tile_collision = null;
+        this.held_item = null;
 
         this.width = 6;
         this.height = 12;
@@ -42,6 +46,10 @@ export class Player extends GameObject {
         this.walk_left_anim = new Animation('player_walk_left');
         this.walk_left_anim.anchor_x = 0.5;
         this.walk_left_anim.anchor_y = 1.0;
+
+        this.ipad_lookat_anim = new Animation('player_ipad_look');
+        this.ipad_lookat_anim.anchor_x = 0.5;
+        this.ipad_lookat_anim.anchor_y = 1.0;
 
         this.climbing_anim = new Animation('player_climbing');
         this.climbing_anim.anchor_x = 0.5;
@@ -135,6 +143,14 @@ export class Player extends GameObject {
                 this.curr_anim = this.climbing_anim;
             }
 
+            const centertile = this.tileAt(this.x, this.y - this.height/2);
+            if(centertile === BACKPACK) {
+                // Pickup backpack
+                this.inventory.push(null);
+                const tile_index = Math.floor(this.x/this.map.tile_width) + Math.floor(this.y/this.map.tile_height) * this.map.width;
+                this.map.layers[0].tiles[tile_index] = 0;
+            }
+
             this.moveY(this.fall_speed * dt);
 
             camera.target(this.x, this.y);
@@ -152,47 +168,84 @@ export class Player extends GameObject {
             const tile_index = tile_x + tile_y * this.map.width;
 
             if(input.isKeyJustPressed('mouse')) {
-                if(this.held_tile === null) {
+                if(this.active_inventory_slot === null) {
                     // Try pick up tile
+                    const pickup_layer_tile = this.map.layers[PICKUP_LAYER].tiles[tile_index];
+                    const can_pickup = pickup_layer_tile !== 0 && pickup_layer_tile !== 49;
+
                     let first_open_inventory_slot = 0;
-                    for(let i=0; i<this.inventory.length; ++i) {
+                    for(let i=0; i<this.inventory.length && can_pickup; ++i) {
                         if(this.inventory[i] !== null) {
                             ++first_open_inventory_slot;
                         }
                     }
 
-                    if(first_open_inventory_slot < this.inventory.length) {
-                        this.inventory[first_open_inventory_slot] = [
-                            this.map.layers[0].tiles[tile_index],
-                            this.map.layers[COLLISION_LAYER].tiles[tile_index]
-                        ];
+                    if(can_pickup && first_open_inventory_slot < this.inventory.length) {
+                        let item = null;
+                        switch(pickup_layer_tile) {
+                            case 24: // Stair right
+                                item = items.stairs_right;
+                                break;
+                            case 39: // Stair left
+                                item = items.stairs_left;
+                                break;
+                            case 23: // Ladder
+                                item = items.ladder;
+                                break;
+                            case 25: // Bridge
+                                item = items.bridge;
+                                break;
+                            default: break;
+                        }
 
-                        this.map.layers[0].tiles[tile_index] = 0;
-                        this.map.layers[COLLISION_LAYER].tiles[tile_index] = 0;
+                        if(item === null) {
+                            debugger;
+                        }
+
+                        this.inventory[first_open_inventory_slot] = item;
+
+                        const tile_indices_to_remove = [tile_index];
+                        const tile_index_deltas_to_check = [ -1, 1, -2, 2, -this.map.width, this.map.width ];
+                        for(const td of tile_index_deltas_to_check) {
+                            if(this.map.layers[PICKUP_LAYER].tiles[tile_index+td] === pickup_layer_tile) {
+                                tile_indices_to_remove.push(tile_index + td);
+                            }
+                        }
+
+                        for(const i of tile_indices_to_remove) {
+                            this.map.layers[0].tiles[i] = 0;
+                            this.map.layers[COLLISION_LAYER].tiles[i] = 0;
+                            this.map.layers[PICKUP_LAYER].tiles[i] = 49;
+                        }
                     }
                 }
                 else {
-                    this.map.layers[0].tiles[tile_index] = this.held_tile;
-                    this.map.layers[COLLISION_LAYER].tiles[tile_index] = this.held_tile_collision;
+                    // TODO: Place item
 
-                    this.held_tile = null;
-                    this.held_tile_collision = null;
+                    this.held_item = null;
                     this.inventory[this.active_inventory_slot] = null;
                     this.active_inventory_slot = null;
                 }
             }
 
-            if(this.held_tile === null) {
+            if(this.held_item === null) {
                 gfx.drawImage(sprites['misc'], 0, 16, 16, 16, mouse_x-8, mouse_y-8, 16, 16);
             }
             else {
                 gfx.globalAlpha = 0.5;
+                // TODO: Draw item ghost
+                for(let y=0; y<this.held_item.height; ++y) {
+                    for(let x=0; x<this.held_item.width; ++x) {
+
+                    }
+                }
                 this.map.tileset.drawTile(this.held_tile,
                                           tile_x*this.map.tile_width, tile_y*this.map.tile_height);
                 gfx.globalAlpha = 1.0;
             }
 
             // Do ipad animations
+            this.curr_anim = this.ipad_lookat_anim;
 
             if(input.isKeyJustPressed('e')) {
                 this.state = states.PLATFORMING;
@@ -222,13 +275,11 @@ export class Player extends GameObject {
                    input.mouse_y > hud_y && input.mouse_y <= hud_y+16)
                 {
                     if(this.inventory[i] === null) {
-                        this.held_tile = null;
-                        this.held_tile_collision = null;
+                        this.held_item = null;
                         this.active_inventory_slot = null;
                     }
                     else {
-                        this.held_tile = this.inventory[i][0];
-                        this.held_tile_collision = this.inventory[i][1];
+                        this.held_item = this.inventory[i];
                         this.active_inventory_slot = i;
                     }
                 }
@@ -237,26 +288,9 @@ export class Player extends GameObject {
             gfx.drawImage(sprites['misc'], 0, 0, 16, 16, hud_x, hud_y, 16, 16);
 
             if(this.inventory[i] !== null) {
-                let src_x = 0;
-                switch(this.inventory[i][0]) {
-                    case 23: // Ladder
-                        src_x = 48;
-                        break;
-                    case 24: // stairs right
-                        src_x = 32;
-                        break;
-                    case 39: // stairs left
-                        src_x = 32;
-                        break;
-                    case 25: // Bridge
-                    case 26:
-                        src_x = 16;
-                        break;
-                    default: break;
-                }
-
                 gfx.drawImage(sprites['misc'],
-                              src_x, 0, 16, 16,
+                              this.inventory[i].icon_x, this.inventory[i].icon_y,
+                              16, 16,
                               hud_x, hud_y, 16, 16);
 
                 if(this.active_inventory_slot === i) {

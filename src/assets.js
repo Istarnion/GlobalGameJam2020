@@ -47,9 +47,17 @@ export const animations = {
     },
     player_ipad_look: {
         image: "character",
-        timePerFrame: 0.1,
+        timePerFrame: 0.05,
         looping: 'loop',
         frames: [
+            { x:   0, y: 64, w: 16, h: 16 },
+            { x:  16, y: 64, w: 16, h: 16 },
+            { x:  32, y: 64, w: 16, h: 16 },
+            { x:  48, y: 64, w: 16, h: 16 },
+            { x:  64, y: 64, w: 16, h: 16 },
+            { x:  80, y: 64, w: 16, h: 16 },
+            { x:  96, y: 64, w: 16, h: 16 },
+            { x: 112, y: 64, w: 16, h: 16 },
         ]
     },
     player_ipad_close: {

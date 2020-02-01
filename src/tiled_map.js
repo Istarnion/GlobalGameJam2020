@@ -1,6 +1,7 @@
 import { images } from "./graphics.js";
 import { ajax } from "./ajax.js"
 import { Tileset } from "./tileset.js";
+import { gfx } from "./graphics.js";
 
 // Reference: https://doc.mapeditor.org/en/stable/reference/json-map-format/
 
@@ -97,6 +98,23 @@ export class TiledMap {
                                       y*this.tile_height);
             }
         }
+    }
+
+    drawLayerDebug(i) {
+        gfx.globalAlpha = 0.5;
+        gfx.fillStyle = 'white';
+        const layer = this.layers[i];
+        for(var y=0; y<this.height; ++y) {
+            for(var x=0; x<this.width; ++x) {
+                const index = x + y * this.width;
+                if(layer.tiles[index] !== 0) {
+                    gfx.fillRect(x*this.tile_width, y*this.tile_height,
+                                 this.tile_width, this.tile_height);
+                }
+            }
+        }
+
+        gfx.globalAlpha = 1.0;
     }
 }
 
