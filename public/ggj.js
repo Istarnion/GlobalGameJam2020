@@ -4123,7 +4123,7 @@ var camera = {
   x: 0,
   y: 0,
   bounds_left: 0,
-  bounds_right: 140 * 16,
+  bounds_right: 144 * 16,
   bounds_top: 0,
   bounds_bottom: 105 * 16
 };
@@ -4772,6 +4772,7 @@ var input = {
     one: [false, false],
     two: [false, false],
     three: [false, false],
+    four: [false, false],
     mouse: [false, false]
   }
 };
@@ -4838,6 +4839,10 @@ var getKeyNameFromCode = function getKeyNameFromCode(code) {
 
     case "Digit3":
       key = "three";
+      break;
+
+    case "Digit4":
+      key = "four";
       break;
 
     default:
@@ -5433,6 +5438,31 @@ function (_GameObject) {
             _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 16, 16, 16, hud_x, hud_y, 16, 16);
           }
         }
+      } // Keyboard shortcuts for inventory
+
+
+      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('one') && this.inventory[0] !== null) {
+        this.held_item = this.inventory[0];
+        this.active_inventory_slot = 0;
+        this.state = states.TILE_PLACING;
+      }
+
+      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('two') && this.inventory.length >= 2 && this.inventory[1] !== null) {
+        this.held_item = this.inventory[1];
+        this.active_inventory_slot = 1;
+        this.state = states.TILE_PLACING;
+      }
+
+      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('three') && this.inventory.length >= 3 && this.inventory[2] !== null) {
+        this.held_item = this.inventory[2];
+        this.active_inventory_slot = 2;
+        this.state = states.TILE_PLACING;
+      }
+
+      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('four') && this.inventory.length >= 4 && this.inventory[3] !== null) {
+        this.held_item = this.inventory[3];
+        this.active_inventory_slot = 3;
+        this.state = states.TILE_PLACING;
       }
     }
   }, {

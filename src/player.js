@@ -89,7 +89,6 @@ export class Player extends GameObject {
     }
 
     update(dt) {
-
         if(this.state == states.PLATFORMING) {
             let movement_x = 0;
             if(input.isKeyDown('a', 'left')) {
@@ -406,6 +405,31 @@ export class Player extends GameObject {
                                   hud_x, hud_y, 16, 16);
                 }
             }
+        }
+
+        // Keyboard shortcuts for inventory
+        if(input.isKeyJustPressed('one') && this.inventory[0] !== null) {
+            this.held_item = this.inventory[0];
+            this.active_inventory_slot = 0;
+            this.state = states.TILE_PLACING;
+        }
+
+        if(input.isKeyJustPressed('two') && this.inventory.length >= 2 && this.inventory[1] !== null) {
+            this.held_item = this.inventory[1];
+            this.active_inventory_slot = 1;
+            this.state = states.TILE_PLACING;
+        }
+
+        if(input.isKeyJustPressed('three') && this.inventory.length >= 3 && this.inventory[2] !== null) {
+            this.held_item = this.inventory[2];
+            this.active_inventory_slot = 2;
+            this.state = states.TILE_PLACING;
+        }
+
+        if(input.isKeyJustPressed('four') && this.inventory.length >= 4 && this.inventory[3] !== null) {
+            this.held_item = this.inventory[3];
+            this.active_inventory_slot = 3;
+            this.state = states.TILE_PLACING;
         }
     }
 

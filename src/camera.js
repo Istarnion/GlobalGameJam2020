@@ -5,7 +5,7 @@ export const camera = {
     x: 0,
     y: 0,
     bounds_left: 0,
-    bounds_right: 140*16,
+    bounds_right: 144*16,
     bounds_top: 0,
     bounds_bottom: 105*16
 };
