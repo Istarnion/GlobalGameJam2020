@@ -4,6 +4,7 @@ import { input } from "./input.js";
 import { camera } from "./camera.js";
 import { Animation } from "./animation.js";
 import { items } from "./inventory_item.js";
+import { BlockFadeEffect } from "./block_fade_effect.js";
 
 const MAX_FALL_SPEED = 128;
 const CLIMB_SPEED = 24;
@@ -236,6 +237,9 @@ export class Player extends GameObject {
                             this.map.layers[TILE_LAYER].tiles[i] = 0;
                             this.map.layers[COLLISION_LAYER].tiles[i] = 0;
                             this.map.layers[PICKUP_LAYER].tiles[i] = 65;
+
+                            this.game.arena.add(new BlockFadeEffect(i%this.map.width,
+                                                                    Math.floor(i/this.map.width)));
                         }
                     }
                 }

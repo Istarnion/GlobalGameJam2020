@@ -4043,6 +4043,70 @@ var maps = {
 
 /***/ }),
 
+/***/ "./src/block_fade_effect.js":
+/*!**********************************!*\
+  !*** ./src/block_fade_effect.js ***!
+  \**********************************/
+/*! exports provided: BlockFadeEffect */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BlockFadeEffect", function() { return BlockFadeEffect; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _game_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./game.js */ "./src/game.js");
+/* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
+
+
+
+
+
+
+
+var BlockFadeEffect =
+/*#__PURE__*/
+function (_GameObject) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default()(BlockFadeEffect, _GameObject);
+
+  function BlockFadeEffect(x, y) {
+    var _this;
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, BlockFadeEffect);
+
+    _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(BlockFadeEffect).call(this));
+    _this.x = x * 16 + 8;
+    _this.y = y * 16 + 8;
+    _this.size = 8;
+    return _this;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BlockFadeEffect, [{
+    key: "update",
+    value: function update(dt) {
+      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillStyle = 'white';
+      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillRect(this.x - this.size, this.y - this.size, this.size * 2, this.size * 2);
+      this.size -= dt * 16;
+
+      if (this.size < 0) {
+        this.die();
+      }
+    }
+  }]);
+
+  return BlockFadeEffect;
+}(_game_js__WEBPACK_IMPORTED_MODULE_5__["GameObject"]);
+
+/***/ }),
+
 /***/ "./src/camera.js":
 /*!***********************!*\
   !*** ./src/camera.js ***!
@@ -4971,6 +5035,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./camera.js */ "./src/camera.js");
 /* harmony import */ var _animation_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./animation.js */ "./src/animation.js");
 /* harmony import */ var _inventory_item_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./inventory_item.js */ "./src/inventory_item.js");
+/* harmony import */ var _block_fade_effect_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./block_fade_effect.js */ "./src/block_fade_effect.js");
+
 
 
 
@@ -5220,6 +5286,7 @@ function (_GameObject) {
                 this.map.layers[TILE_LAYER].tiles[_i3] = 0;
                 this.map.layers[COLLISION_LAYER].tiles[_i3] = 0;
                 this.map.layers[PICKUP_LAYER].tiles[_i3] = 65;
+                this.game.arena.add(new _block_fade_effect_js__WEBPACK_IMPORTED_MODULE_11__["BlockFadeEffect"](_i3 % this.map.width, Math.floor(_i3 / this.map.width)));
               }
             }
           } else {
