@@ -1,16 +1,13 @@
 export const input = {
     mouse_x: 0,
     mouse_y: 0,
-    mouse_down: false,
     keyDownListeners: [],
     specificKeyDownListeners: {},
     keyUpListeners: [],
     specificKeyUpListeners: {},
 
     // Arguments: Either a keyname and function, or just a function
-    isKeyDown: function(key, altKey) {
-        return !!this.keyStates[key][0] ||
-               (altKey && !!this.keyStates[altKey][0]);
+    isKeyDown: function(key, altKey) { return !!this.keyStates[key][0] || (altKey && !!this.keyStates[altKey][0]);
     },
 
     isKeyJustPressed: function(key) {
@@ -143,7 +140,8 @@ export const input = {
         e: [false, false],
         one: [false, false],
         two: [false, false],
-        three: [false, false]
+        three: [false, false],
+        mouse: [false, false]
     }
 };
 
@@ -198,12 +196,13 @@ canvas.addEventListener("mousemove", (e) => {
 canvas.addEventListener("mousedown", (e) => {
     e.preventDefault();
     input.mouse_down = true;
+    input.keyStates['mouse'][0] = true;
     return false;
 });
 
 window.addEventListener("mouseup", (e) => {
     e.preventDefault();
-    input.mouse_down = false;
+    input.keyStates['mouse'][0] = false;
     return false;
 });
 
