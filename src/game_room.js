@@ -19,7 +19,11 @@ export class GameRoom extends Room {
         gfx.save();
         gfx.translate(-camera.x, -camera.y);
 
-        this.map.drawLayer(0);
+        const left = Math.floor(camera.x / this.map.tile_width);
+        const right = Math.floor(camera.y / this.map.tile_height);
+        const across = gfx.width / this.map.tile_width + 1;
+        const down = gfx.height / this.map.tile_height + 1;
+        this.map.drawLayer(0, left, right, across, down);
 
         this.arena.update(dt);
 

@@ -88,10 +88,15 @@ export class TiledMap {
         }
     }
 
-    drawLayer(i) {
+    drawLayer(i, left, top, across, down) {
+        left = left || 0;
+        top = top || 0;
+        across = across || this.width;
+        down = down || this.height;
+
         const layer = this.layers[i];
-        for(var y=0; y<this.height; ++y) {
-            for(var x=0; x<this.width; ++x) {
+        for(var y=top; y<top+down; ++y) {
+            for(var x=left; x<left+across; ++x) {
                 const index = x + y * this.width;
                 this.tileset.drawTile(layer.tiles[index],
                                       x*this.tile_width,

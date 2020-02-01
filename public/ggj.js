@@ -4374,7 +4374,11 @@ function (_Room) {
     value: function update(dt) {
       _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].save();
       _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].translate(-_camera_js__WEBPACK_IMPORTED_MODULE_10__["camera"].x, -_camera_js__WEBPACK_IMPORTED_MODULE_10__["camera"].y);
-      this.map.drawLayer(0);
+      var left = Math.floor(_camera_js__WEBPACK_IMPORTED_MODULE_10__["camera"].x / this.map.tile_width);
+      var right = Math.floor(_camera_js__WEBPACK_IMPORTED_MODULE_10__["camera"].y / this.map.tile_height);
+      var across = _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].width / this.map.tile_width + 1;
+      var down = _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].height / this.map.tile_height + 1;
+      this.map.drawLayer(0, left, right, across, down);
       this.arena.update(dt);
       _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].restore();
       this.player.updateHUD();
@@ -5761,11 +5765,15 @@ function () {
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(TiledMap, [{
     key: "drawLayer",
-    value: function drawLayer(i) {
+    value: function drawLayer(i, left, top, across, down) {
+      left = left || 0;
+      top = top || 0;
+      across = across || this.width;
+      down = down || this.height;
       var layer = this.layers[i];
 
-      for (var y = 0; y < this.height; ++y) {
-        for (var x = 0; x < this.width; ++x) {
+      for (var y = top; y < top + down; ++y) {
+        for (var x = left; x < left + across; ++x) {
           var index = x + y * this.width;
           this.tileset.drawTile(layer.tiles[index], x * this.tile_width, y * this.tile_height);
         }
