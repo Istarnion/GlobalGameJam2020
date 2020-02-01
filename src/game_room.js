@@ -11,7 +11,8 @@ export class GameRoom extends Room {
         this.map = new TiledMap("dungeon");
         this.arena = new Arena();
 
-        this.arena.add(new Player(this));
+        this.player = new Player(this);
+        this.arena.add(this.player);
     }
 
     update(dt) {
@@ -23,6 +24,7 @@ export class GameRoom extends Room {
         this.arena.update(dt);
 
         gfx.restore();
+        this.player.updateHUD();
     }
 }
 

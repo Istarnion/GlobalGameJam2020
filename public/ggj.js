@@ -3806,7 +3806,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "maps", function() { return maps; });
 var images = {
   character: "res/Character.png",
-  FlisesettGGJ2020: "res/FlisesettGGJ2020.png"
+  FlisesettGGJ2020: "res/FlisesettGGJ2020.png",
+  misc: "res/SparkleInventoryAndStuff.png"
 };
 var animations = {
   player_idle: {
@@ -3968,6 +3969,32 @@ var animations = {
     timePerFrame: 0.1,
     looping: 'loop',
     frames: []
+  },
+  sparkle: {
+    image: "misc",
+    timePerFrame: 0.1,
+    looping: 'loop',
+    frames: [{
+      x: 64,
+      y: 0,
+      w: 16,
+      h: 16
+    }, {
+      x: 80,
+      y: 0,
+      w: 16,
+      h: 16
+    }, {
+      x: 96,
+      y: 0,
+      w: 16,
+      h: 16
+    }, {
+      x: 112,
+      y: 0,
+      w: 16,
+      h: 16
+    }]
   }
 };
 var maps = {
@@ -4231,8 +4258,9 @@ function (_Room) {
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(GameRoom).call(this));
     _this.map = new _tiled_map_js__WEBPACK_IMPORTED_MODULE_7__["TiledMap"]("dungeon");
     _this.arena = new _game_js__WEBPACK_IMPORTED_MODULE_6__["Arena"]();
+    _this.player = new _player_js__WEBPACK_IMPORTED_MODULE_8__["Player"](_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this));
 
-    _this.arena.add(new _player_js__WEBPACK_IMPORTED_MODULE_8__["Player"](_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this)));
+    _this.arena.add(_this.player);
 
     return _this;
   }
@@ -4245,6 +4273,7 @@ function (_Room) {
       this.map.drawLayer(0);
       this.arena.update(dt);
       _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].restore();
+      this.player.updateHUD();
     }
   }]);
 
@@ -4882,6 +4911,9 @@ function (_GameObject) {
 
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(Player).call(this));
     _this.state = states.PLATFORMING;
+    _this.inventory = [null];
+    _this.held_tile = null;
+    _this.held_tile_collision = null;
     _this.width = 6;
     _this.height = 12;
     _this.idle_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_idle');
@@ -4995,15 +5027,36 @@ function (_GameObject) {
         var tile_index = tile_x + tile_y * this.map.width;
 
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
-          this.map.layers[0].tiles[tile_index] = 1;
+          if (this.held_tile === null) {
+            // Try pick up tile
+            this.inventory[0] = [this.map.layers[0].tiles[tile_index], this.map.layers[COLLISION_LAYER].tiles[tile_index]];
+            this.map.layers[0].tiles[tile_index] = 0;
+            this.map.layers[COLLISION_LAYER].tiles[tile_index] = 0;
+          } else {
+            this.map.layers[0].tiles[tile_index] = this.held_tile;
+            this.map.layers[COLLISION_LAYER].tiles[tile_index] = this.held_tile_collision;
+            this.held_tile = null;
+            this.held_tile_collision = null;
+            this.inventory[0] = null;
+          }
         }
 
-        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillStyle = 'rgba(0, 255, 0, 0.5)';
-        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillRect(tile_x * this.map.tile_width, tile_y * this.map.tile_height, this.map.tile_width, this.map.tile_height); // Do ipad animations
-        //
+        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].globalAlpha = 0.5;
+
+        if (this.held_tile === null) {
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillStyle = 'rgba(0, 255, 0)';
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillRect(tile_x * this.map.tile_width, tile_y * this.map.tile_height, this.map.tile_width, this.map.tile_height);
+        } else {
+          this.map.tileset.drawTile(this.held_tile, tile_x * this.map.tile_width, tile_y * this.map.tile_height);
+        }
+
+        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].globalAlpha = 1.0; // Do ipad animations
 
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
           this.state = states.PLATFORMING;
+        } else if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('one')) {
+          this.held_tile = this.inventory[0][0];
+          this.held_tile_collision = this.inventory[0][1];
         }
       } // Draw
 
@@ -5014,6 +5067,50 @@ function (_GameObject) {
       if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('q')) {
         _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillStyle = 'rgba(255, 0, 255, 0.5)';
         _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillRect(this.x - this.width / 2, this.y - this.height, this.width, this.height);
+      }
+    }
+  }, {
+    key: "updateHUD",
+    value: function updateHUD() {
+      var hud_x = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / 2 - (this.inventory.length + 1) * 18 / 2;
+      var hud_y = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height - 20;
+      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['FlisesettGGJ2020'], 32, 32, 16, 16, hud_x, hud_y, 16, 16);
+
+      for (var i = 0; i < this.inventory.length; ++i) {
+        hud_x += 18;
+        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 0, 16, 16, hud_x, hud_y, 16, 16);
+
+        if (this.inventory[i] !== null) {
+          var src_x = 0;
+
+          switch (this.inventory[i][0]) {
+            case 23:
+              // Ladder
+              src_x = 48;
+              break;
+
+            case 24:
+              // stairs right
+              src_x = 32;
+              break;
+
+            case 39:
+              // stairs left
+              src_x = 32;
+              break;
+
+            case 25: // Bridge
+
+            case 26:
+              src_x = 16;
+              break;
+
+            default:
+              break;
+          }
+
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], src_x, 0, 16, 16, hud_x, hud_y, 16, 16);
+        }
       }
     }
   }, {

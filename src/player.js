@@ -1,5 +1,5 @@
 import { GameObject } from "./game.js";
-import { gfx } from "./graphics.js";
+import { gfx, sprites } from "./graphics.js";
 import { input } from "./input.js";
 import { camera } from "./camera.js";
 import { Animation } from "./animation.js";
@@ -22,6 +22,10 @@ export class Player extends GameObject {
         super();
 
         this.state = states.PLATFORMING;
+
+        this.inventory = [null];
+        this.held_tile = null;
+        this.held_tile_collision = null;
 
         this.width = 6;
         this.height = 12;
@@ -147,17 +151,47 @@ export class Player extends GameObject {
             const tile_index = tile_x + tile_y * this.map.width;
 
             if(input.isKeyJustPressed('mouse')) {
-                this.map.layers[0].tiles[tile_index] = 1;
+                if(this.held_tile === null) {
+                    // Try pick up tile
+                    this.inventory[0] = [
+                        this.map.layers[0].tiles[tile_index],
+                        this.map.layers[COLLISION_LAYER].tiles[tile_index]
+                    ];
+
+                    this.map.layers[0].tiles[tile_index] = 0;
+                    this.map.layers[COLLISION_LAYER].tiles[tile_index] = 0;
+                }
+                else {
+                    this.map.layers[0].tiles[tile_index] = this.held_tile;
+                    this.map.layers[COLLISION_LAYER].tiles[tile_index] = this.held_tile_collision;
+
+                    this.held_tile = null;
+                    this.held_tile_collision = null;
+                    this.inventory[0] = null;
+                }
             }
 
-            gfx.fillStyle = 'rgba(0, 255, 0, 0.5)';
-            gfx.fillRect(tile_x*this.map.tile_width, tile_y*this.map.tile_height,
-                         this.map.tile_width, this.map.tile_height);
+            gfx.globalAlpha = 0.5;
+            if(this.held_tile === null) {
+                gfx.fillStyle = 'rgba(0, 255, 0)';
+                gfx.fillRect(tile_x*this.map.tile_width, tile_y*this.map.tile_height,
+                             this.map.tile_width, this.map.tile_height);
+            }
+            else {
+                this.map.tileset.drawTile(this.held_tile,
+                                          tile_x*this.map.tile_width, tile_y*this.map.tile_height);
+            }
+
+            gfx.globalAlpha = 1.0;
 
             // Do ipad animations
-            //
+
             if(input.isKeyJustPressed('e')) {
                 this.state = states.PLATFORMING;
+            }
+            else if(input.isKeyJustPressed('one')) {
+                this.held_tile = this.inventory[0][0];
+                this.held_tile_collision = this.inventory[0][1];
             }
         }
 
@@ -168,6 +202,41 @@ export class Player extends GameObject {
         if(input.isKeyDown('q')) {
             gfx.fillStyle = 'rgba(255, 0, 255, 0.5)';
             gfx.fillRect(this.x-this.width/2, this.y-this.height, this.width, this.height);
+        }
+    }
+
+    updateHUD() {
+        let hud_x = gfx.width/2 - (this.inventory.length+1) * 18 / 2;
+        const hud_y = gfx.height - 20;
+        gfx.drawImage(sprites['FlisesettGGJ2020'], 32, 32, 16, 16, hud_x, hud_y, 16, 16);
+
+        for(var i=0; i<this.inventory.length; ++i) {
+            hud_x += 18;
+            gfx.drawImage(sprites['misc'], 0, 0, 16, 16, hud_x, hud_y, 16, 16);
+
+            if(this.inventory[i] !== null) {
+                let src_x = 0;
+                switch(this.inventory[i][0]) {
+                    case 23: // Ladder
+                        src_x = 48;
+                        break;
+                    case 24: // stairs right
+                        src_x = 32;
+                        break;
+                    case 39: // stairs left
+                        src_x = 32;
+                        break;
+                    case 25: // Bridge
+                    case 26:
+                        src_x = 16;
+                        break;
+                    default: break;
+                }
+
+                gfx.drawImage(sprites['misc'],
+                              src_x, 0, 16, 16,
+                              hud_x, hud_y, 16, 16);
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 export const images = {
     character: "res/Character.png",
-    FlisesettGGJ2020: "res/FlisesettGGJ2020.png"
+    FlisesettGGJ2020: "res/FlisesettGGJ2020.png",
+    misc: "res/SparkleInventoryAndStuff.png"
 };
 
 export const animations = {
@@ -92,6 +93,17 @@ export const animations = {
         timePerFrame: 0.1,
         looping: 'loop',
         frames: [
+        ]
+    },
+    sparkle: {
+        image: "misc",
+        timePerFrame: 0.1,
+        looping: 'loop',
+        frames: [
+            { x:  64, y: 0, w: 16, h: 16 },
+            { x:  80, y: 0, w: 16, h: 16 },
+            { x:  96, y: 0, w: 16, h: 16 },
+            { x: 112, y: 0, w: 16, h: 16 },
         ]
     }
 };
