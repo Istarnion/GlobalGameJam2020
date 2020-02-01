@@ -3896,9 +3896,49 @@ var animations = {
   },
   player_ipad_look: {
     image: "character",
-    timePerFrame: 0.1,
+    timePerFrame: 0.05,
     looping: 'loop',
-    frames: []
+    frames: [{
+      x: 0,
+      y: 64,
+      w: 16,
+      h: 16
+    }, {
+      x: 16,
+      y: 64,
+      w: 16,
+      h: 16
+    }, {
+      x: 32,
+      y: 64,
+      w: 16,
+      h: 16
+    }, {
+      x: 48,
+      y: 64,
+      w: 16,
+      h: 16
+    }, {
+      x: 64,
+      y: 64,
+      w: 16,
+      h: 16
+    }, {
+      x: 80,
+      y: 64,
+      w: 16,
+      h: 16
+    }, {
+      x: 96,
+      y: 64,
+      w: 16,
+      h: 16
+    }, {
+      x: 112,
+      y: 64,
+      w: 16,
+      h: 16
+    }]
   },
   player_ipad_close: {
     image: "character",
@@ -4019,9 +4059,9 @@ var camera = {
   x: 0,
   y: 0,
   bounds_left: 0,
-  bounds_right: 100 * 16,
+  bounds_right: 140 * 16,
   bounds_top: 0,
-  bounds_bottom: 100 * 16
+  bounds_bottom: 105 * 16
 };
 
 camera.target = function (x, y) {
@@ -4780,6 +4820,57 @@ window.addEventListener("mouseup", function (e) {
 
 /***/ }),
 
+/***/ "./src/inventory_item.js":
+/*!*******************************!*\
+  !*** ./src/inventory_item.js ***!
+  \*******************************/
+/*! exports provided: items */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "items", function() { return items; });
+var items = {
+  ladder: {
+    width: 1,
+    height: 2,
+    tile_layer: [23, 23],
+    collision_layer: [68, 68],
+    pickup_tile: 23,
+    icon_x: 48,
+    icon_y: 0
+  },
+  bridge: {
+    width: 4,
+    height: 1,
+    tile_layer: [25, 25, 25, 25],
+    collision_layer: [65, 65, 65, 65],
+    pickup_tile: 25,
+    icon_x: 16,
+    icon_y: 0
+  },
+  stairs_left: {
+    width: 2,
+    height: 2,
+    tile_layer: [39, 0, 40, 39],
+    collision_layer: [67, 0, 65, 67],
+    pickup_tile: 39,
+    icon_x: 16,
+    icon_y: 0
+  },
+  stairs_right: {
+    width: 2,
+    height: 2,
+    tile_layer: [0, 24, 24, 29],
+    collision_layer: [0, 66, 66, 65],
+    pickup_tile: 24,
+    icon_x: 32,
+    icon_y: 0
+  }
+};
+
+/***/ }),
+
 /***/ "./src/musicManager.js":
 /*!*****************************!*\
   !*** ./src/musicManager.js ***!
@@ -4879,6 +4970,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
 /* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./camera.js */ "./src/camera.js");
 /* harmony import */ var _animation_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./animation.js */ "./src/animation.js");
+/* harmony import */ var _inventory_item_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./inventory_item.js */ "./src/inventory_item.js");
+
 
 
 
@@ -4891,10 +4984,13 @@ __webpack_require__.r(__webpack_exports__);
 
 var MAX_FALL_SPEED = 128;
 var CLIMB_SPEED = 24;
+var TILE_LAYER = 0;
 var COLLISION_LAYER = 1;
-var STAIRS_RIGHT = 50;
-var STAIRS_LEFT = 51;
-var LADDER = 52;
+var PICKUP_LAYER = 2;
+var STAIRS_RIGHT = 66;
+var STAIRS_LEFT = 67;
+var LADDER = 68;
+var BACKPACK = 19;
 var states = {
   PLATFORMING: 0,
   TILE_PLACING: 1
@@ -4913,8 +5009,7 @@ function (_GameObject) {
     _this.state = states.PLATFORMING;
     _this.inventory = [null];
     _this.active_inventory_slot = null;
-    _this.held_tile = null;
-    _this.held_tile_collision = null;
+    _this.held_item = null;
     _this.width = 6;
     _this.height = 12;
     _this.idle_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_idle');
@@ -4926,12 +5021,16 @@ function (_GameObject) {
     _this.walk_left_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_walk_left');
     _this.walk_left_anim.anchor_x = 0.5;
     _this.walk_left_anim.anchor_y = 1.0;
+    _this.ipad_lookat_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_ipad_look');
+    _this.ipad_lookat_anim.anchor_x = 0.5;
+    _this.ipad_lookat_anim.anchor_y = 1.0;
     _this.climbing_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_climbing');
     _this.climbing_anim.anchor_x = 0.5;
     _this.climbing_anim.anchor_y = 1.0;
     _this.falling_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_falling');
     _this.falling_anim.anchor_x = 0.5;
     _this.falling_anim.anchor_y = 1.0;
+    _this.sparkle_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('sparkle');
     _this.curr_anim = _this.idle_anim;
     _this.game = game;
     _this.map = game.map;
@@ -5014,56 +5113,188 @@ function (_GameObject) {
           this.curr_anim = this.climbing_anim;
         }
 
+        var centertile = this.tileAt(this.x, this.y - this.height / 2);
+
+        if (centertile === BACKPACK) {
+          // Pickup backpack
+          this.inventory.push(null);
+          var tile_index = Math.floor(this.x / this.map.tile_width) + Math.floor(this.y / this.map.tile_height) * this.map.width;
+          this.map.layers[0].tiles[tile_index] = 0;
+        }
+
         this.moveY(this.fall_speed * dt);
         _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].target(this.x, this.y);
 
         if (can_open_ipad && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
           this.state = states.TILE_PLACING;
         }
+
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
+          var tile_x = Math.floor((_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].x) / this.map.tile_width);
+          var tile_y = Math.floor((_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].y) / this.map.tile_height);
+
+          var _tile_index = tile_x + tile_y * this.map.width;
+
+          var collision_tile = this.map.layers[COLLISION_LAYER].tiles[_tile_index];
+          console.log(tile_x, tile_y, _tile_index, collision_tile);
+        }
       } else {
         var mouse_x = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].x;
         var mouse_y = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].y;
-        var tile_x = Math.floor(mouse_x / this.map.tile_width);
-        var tile_y = Math.floor(mouse_y / this.map.tile_height);
-        var tile_index = tile_x + tile_y * this.map.width;
+
+        var _tile_x = Math.floor(mouse_x / this.map.tile_width);
+
+        var _tile_y = Math.floor(mouse_y / this.map.tile_height);
+
+        var _tile_index2 = _tile_x + _tile_y * this.map.width;
 
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
-          if (this.held_tile === null) {
+          if (this.active_inventory_slot === null) {
             // Try pick up tile
+            var pickup_layer_tile = this.map.layers[PICKUP_LAYER].tiles[_tile_index2];
+            var can_pickup = pickup_layer_tile !== 0 && pickup_layer_tile !== 65;
             var first_open_inventory_slot = 0;
 
-            for (var i = 0; i < this.inventory.length; ++i) {
+            for (var i = 0; i < this.inventory.length && can_pickup; ++i) {
               if (this.inventory[i] !== null) {
                 ++first_open_inventory_slot;
               }
             }
 
-            if (first_open_inventory_slot < this.inventory.length) {
-              this.inventory[first_open_inventory_slot] = [this.map.layers[0].tiles[tile_index], this.map.layers[COLLISION_LAYER].tiles[tile_index]];
-              this.map.layers[0].tiles[tile_index] = 0;
-              this.map.layers[COLLISION_LAYER].tiles[tile_index] = 0;
+            if (can_pickup && first_open_inventory_slot < this.inventory.length) {
+              var item = null;
+
+              switch (pickup_layer_tile) {
+                case 24:
+                  // Stair right
+                  item = _inventory_item_js__WEBPACK_IMPORTED_MODULE_10__["items"].stairs_right;
+                  break;
+
+                case 39:
+                  // Stair left
+                  item = _inventory_item_js__WEBPACK_IMPORTED_MODULE_10__["items"].stairs_left;
+                  break;
+
+                case 23:
+                  // Ladder
+                  item = _inventory_item_js__WEBPACK_IMPORTED_MODULE_10__["items"].ladder;
+                  break;
+
+                case 25:
+                  // Bridge
+                  item = _inventory_item_js__WEBPACK_IMPORTED_MODULE_10__["items"].bridge;
+                  break;
+
+                default:
+                  break;
+              }
+
+              if (item === null) {
+                debugger;
+              }
+
+              this.inventory[first_open_inventory_slot] = item; // REMOVE ITEM
+
+              var tile_indices_to_remove = [_tile_index2];
+              var tile_index_deltas_to_check = [];
+
+              for (var y = 0; y < item.height; ++y) {
+                for (var x = 0; x < item.width; ++x) {
+                  tile_index_deltas_to_check.push(x + y * this.map.width);
+                  tile_index_deltas_to_check.push(-x + y * this.map.width);
+                  tile_index_deltas_to_check.push(x - y * this.map.width);
+                  tile_index_deltas_to_check.push(-x - y * this.map.width);
+                }
+              }
+
+              for (var _i = 0, _tile_index_deltas_to = tile_index_deltas_to_check; _i < _tile_index_deltas_to.length; _i++) {
+                var td = _tile_index_deltas_to[_i];
+
+                if (this.map.layers[PICKUP_LAYER].tiles[_tile_index2 + td] === pickup_layer_tile) {
+                  tile_indices_to_remove.push(_tile_index2 + td);
+                }
+              }
+
+              for (var _i2 = 0, _tile_indices_to_remo = tile_indices_to_remove; _i2 < _tile_indices_to_remo.length; _i2++) {
+                var _i3 = _tile_indices_to_remo[_i2];
+                this.map.layers[TILE_LAYER].tiles[_i3] = 0;
+                this.map.layers[COLLISION_LAYER].tiles[_i3] = 0;
+                this.map.layers[PICKUP_LAYER].tiles[_i3] = 65;
+              }
             }
           } else {
-            this.map.layers[0].tiles[tile_index] = this.held_tile;
-            this.map.layers[COLLISION_LAYER].tiles[tile_index] = this.held_tile_collision;
-            this.held_tile = null;
-            this.held_tile_collision = null;
-            this.inventory[this.active_inventory_slot] = null;
-            this.active_inventory_slot = null;
+            // PLACE ITEM
+            var _leftmost = this.map.clampX(mouse_x - Math.floor(this.held_item.width / 2) * this.map.tile_width) / this.map.tile_width;
+
+            var _topmost = this.map.clampY(mouse_y - Math.floor(this.held_item.height / 2) * this.map.tile_height) / this.map.tile_height; // CHECK IF CAN PLACE
+
+
+            var can_place = true;
+
+            if (can_place) {
+              for (var _y = 0; _y < this.held_item.height; ++_y) {
+                for (var _x = 0; _x < this.held_item.width; ++_x) {
+                  var local_index = _x + _y * this.held_item.width;
+
+                  var _i4 = _leftmost + _x + (_topmost + _y) * this.map.width;
+
+                  this.map.layers[TILE_LAYER].tiles[_i4] = this.held_item.tile_layer[local_index];
+                  this.map.layers[COLLISION_LAYER].tiles[_i4] = this.held_item.collision_layer[local_index];
+                  this.map.layers[PICKUP_LAYER].tiles[_i4] = this.held_item.pickup_tile;
+                }
+              }
+
+              this.held_item = null;
+              this.inventory[this.active_inventory_slot] = null;
+              this.active_inventory_slot = null;
+              this.state = states.PLATFORMING;
+            }
           }
         }
 
-        if (this.held_tile === null) {
+        if (this.held_item === null) {
           _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 16, 16, 16, mouse_x - 8, mouse_y - 8, 16, 16);
         } else {
-          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].globalAlpha = 0.5;
-          this.map.tileset.drawTile(this.held_tile, tile_x * this.map.tile_width, tile_y * this.map.tile_height);
-          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].globalAlpha = 1.0;
-        } // Do ipad animations
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].globalAlpha = 0.5; // ITEM GHOST
 
+          var _leftmost2 = this.map.clampX(mouse_x - Math.floor(this.held_item.width / 2) * this.map.tile_width);
+
+          var _topmost2 = this.map.clampY(mouse_y - Math.floor(this.held_item.height / 2) * this.map.tile_height);
+
+          for (var _y2 = 0; _y2 < this.held_item.height; ++_y2) {
+            for (var _x2 = 0; _x2 < this.held_item.width; ++_x2) {
+              this.map.tileset.drawTile(this.held_item.tile_layer[_x2 + _y2 * this.held_item.width], _leftmost2 + _x2 * this.map.tile_width, _topmost2 + _y2 * this.map.tile_height);
+            }
+          }
+
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].globalAlpha = 1.0;
+        } // Do ipad animations enter and exit
+
+
+        this.curr_anim = this.ipad_lookat_anim;
 
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
           this.state = states.PLATFORMING;
+          this.active_inventory_slot = null;
+          this.held_item = null;
+        }
+
+        var tiles_down = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height / this.map.tile_height;
+        var tiles_across = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / this.map.tile_width;
+        var leftmost = Math.max(0, Math.floor((this.x - _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / 2) / this.map.tile_width));
+        var topmost = Math.max(0, Math.floor((this.y - _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height / 2) / this.map.tile_height));
+        var rightmost = Math.min(this.map.width - 1, leftmost + tiles_across);
+        var bottommost = Math.min(this.map.height - 1, topmost + tiles_down);
+        this.sparkle_anim.update(dt);
+
+        for (var _y3 = topmost; _y3 < bottommost; ++_y3) {
+          for (var _x3 = leftmost; _x3 < rightmost; ++_x3) {
+            var index = _x3 + _y3 * this.map.width;
+
+            if (this.map.layers[PICKUP_LAYER].tiles[index] !== 0) {
+              this.sparkle_anim.draw(_x3 * this.map.tile_width, _y3 * this.map.tile_height);
+            }
+          }
         }
       } // Draw
 
@@ -5086,15 +5317,13 @@ function (_GameObject) {
       for (var i = 0; i < this.inventory.length; ++i) {
         hud_x += 18;
 
-        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
+        if (this.state === states.TILE_PLACING && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
           if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x > hud_x && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x <= hud_x + 16 && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y > hud_y && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y <= hud_y + 16) {
             if (this.inventory[i] === null) {
-              this.held_tile = null;
-              this.held_tile_collision = null;
+              this.held_item = null;
               this.active_inventory_slot = null;
             } else {
-              this.held_tile = this.inventory[i][0];
-              this.held_tile_collision = this.inventory[i][1];
+              this.held_item = this.inventory[i];
               this.active_inventory_slot = i;
             }
           }
@@ -5103,35 +5332,7 @@ function (_GameObject) {
         _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 0, 16, 16, hud_x, hud_y, 16, 16);
 
         if (this.inventory[i] !== null) {
-          var src_x = 0;
-
-          switch (this.inventory[i][0]) {
-            case 23:
-              // Ladder
-              src_x = 48;
-              break;
-
-            case 24:
-              // stairs right
-              src_x = 32;
-              break;
-
-            case 39:
-              // stairs left
-              src_x = 32;
-              break;
-
-            case 25: // Bridge
-
-            case 26:
-              src_x = 16;
-              break;
-
-            default:
-              break;
-          }
-
-          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], src_x, 0, 16, 16, hud_x, hud_y, 16, 16);
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], this.inventory[i].icon_x, this.inventory[i].icon_y, 16, 16, hud_x, hud_y, 16, 16);
 
           if (this.active_inventory_slot === i) {
             _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 16, 16, 16, hud_x, hud_y, 16, 16);
@@ -5223,6 +5424,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
 /* harmony import */ var _ajax_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ajax.js */ "./src/ajax.js");
 /* harmony import */ var _tileset_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tileset.js */ "./src/tileset.js");
+
 
 
 
@@ -5443,6 +5645,35 @@ function () {
           this.tileset.drawTile(layer.tiles[index], x * this.tile_width, y * this.tile_height);
         }
       }
+    }
+  }, {
+    key: "drawLayerDebug",
+    value: function drawLayerDebug(i) {
+      _graphics_js__WEBPACK_IMPORTED_MODULE_2__["gfx"].globalAlpha = 0.5;
+      _graphics_js__WEBPACK_IMPORTED_MODULE_2__["gfx"].fillStyle = 'white';
+      var layer = this.layers[i];
+
+      for (var y = 0; y < this.height; ++y) {
+        for (var x = 0; x < this.width; ++x) {
+          var index = x + y * this.width;
+
+          if (layer.tiles[index] !== 0) {
+            _graphics_js__WEBPACK_IMPORTED_MODULE_2__["gfx"].fillRect(x * this.tile_width, y * this.tile_height, this.tile_width, this.tile_height);
+          }
+        }
+      }
+
+      _graphics_js__WEBPACK_IMPORTED_MODULE_2__["gfx"].globalAlpha = 1.0;
+    }
+  }, {
+    key: "clampX",
+    value: function clampX(x) {
+      return x - x % this.tile_width;
+    }
+  }, {
+    key: "clampY",
+    value: function clampY(y) {
+      return y - y % this.tile_height;
     }
   }]);
 

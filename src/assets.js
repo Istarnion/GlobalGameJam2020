@@ -113,7 +113,7 @@ export const animations = {
             { x:  96, y: 0, w: 16, h: 16 },
             { x: 112, y: 0, w: 16, h: 16 },
         ]
-    }
+    },
 };
 
 export const maps = {

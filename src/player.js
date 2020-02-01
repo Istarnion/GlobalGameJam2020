@@ -59,6 +59,8 @@ export class Player extends GameObject {
         this.falling_anim.anchor_x = 0.5;
         this.falling_anim.anchor_y = 1.0;
 
+        this.sparkle_anim = new Animation('sparkle');
+
         this.curr_anim = this.idle_anim;
 
         this.game = game;
@@ -158,6 +160,14 @@ export class Player extends GameObject {
             if(can_open_ipad && input.isKeyJustPressed('e')) {
                 this.state = states.TILE_PLACING;
             }
+
+            if(input.isKeyJustPressed('mouse')) {
+                const tile_x = Math.floor((input.mouse_x+camera.x) / this.map.tile_width);
+                const tile_y = Math.floor((input.mouse_y+camera.y) / this.map.tile_height);
+                const tile_index = tile_x + tile_y * this.map.width;
+                const collision_tile = this.map.layers[COLLISION_LAYER].tiles[tile_index];
+                console.log(tile_x, tile_y, tile_index, collision_tile);
+            }
         }
         else {
             const mouse_x = input.mouse_x + camera.x;
@@ -171,7 +181,7 @@ export class Player extends GameObject {
                 if(this.active_inventory_slot === null) {
                     // Try pick up tile
                     const pickup_layer_tile = this.map.layers[PICKUP_LAYER].tiles[tile_index];
-                    const can_pickup = pickup_layer_tile !== 0 && pickup_layer_tile !== 49;
+                    const can_pickup = pickup_layer_tile !== 0 && pickup_layer_tile !== 65;
 
                     let first_open_inventory_slot = 0;
                     for(let i=0; i<this.inventory.length && can_pickup; ++i) {
@@ -206,7 +216,16 @@ export class Player extends GameObject {
 
                         // REMOVE ITEM
                         const tile_indices_to_remove = [tile_index];
-                        const tile_index_deltas_to_check = [ -1, 1, -2, 2, -this.map.width, this.map.width ];
+                        const tile_index_deltas_to_check = [];
+                        for(let y=0; y<item.height; ++y) {
+                            for(let x=0; x<item.width; ++x) {
+                                tile_index_deltas_to_check.push( x+y*this.map.width);
+                                tile_index_deltas_to_check.push(-x+y*this.map.width);
+                                tile_index_deltas_to_check.push( x-y*this.map.width);
+                                tile_index_deltas_to_check.push(-x-y*this.map.width);
+                            }
+                        }
+
                         for(const td of tile_index_deltas_to_check) {
                             if(this.map.layers[PICKUP_LAYER].tiles[tile_index+td] === pickup_layer_tile) {
                                 tile_indices_to_remove.push(tile_index + td);
@@ -216,29 +235,42 @@ export class Player extends GameObject {
                         for(const i of tile_indices_to_remove) {
                             this.map.layers[TILE_LAYER].tiles[i] = 0;
                             this.map.layers[COLLISION_LAYER].tiles[i] = 0;
-                            this.map.layers[PICKUP_LAYER].tiles[i] = 49;
+                            this.map.layers[PICKUP_LAYER].tiles[i] = 65;
                         }
                     }
                 }
                 else {
                     // PLACE ITEM
-                    const leftmost = this.map.clampX(mouse_x - Math.floor(this.held_item.width/2) * this.map.tile_width) / this.map.tile_width;
-                    const topmost = this.map.clampY(mouse_y - Math.floor(this.held_item.height/2) * this.map.tile_height) / this.map.tile_height;
+                    const leftmost = this.map.clampX(mouse_x - Math.floor(this.held_item.width/2) *
+                                                     this.map.tile_width) / this.map.tile_width;
+                    const topmost = this.map.clampY(mouse_y - Math.floor(this.held_item.height/2) *
+                                                    this.map.tile_height) / this.map.tile_height;
 
-                    for(let y=0; y<this.held_item.height; ++y) {
-                        for(let x=0; x<this.held_item.width; ++x) {
-                            const local_index = x + y * this.held_item.width;
-                            const i = (leftmost+x) + (topmost+y) * this.map.width
-                            this.map.layers[TILE_LAYER].tiles[i] = this.held_item.tile_layer[local_index];
-                            this.map.layers[COLLISION_LAYER].tiles[i] = this.held_item.collision_layer[local_index];
-                            this.map.layers[PICKUP_LAYER].tiles[i] = this.held_item.pickup_tile;
+                    // CHECK IF CAN PLACE
+                    let can_place = true;
+
+                    if(can_place) {
+                        for(let y=0; y<this.held_item.height; ++y) {
+                            for(let x=0; x<this.held_item.width; ++x) {
+                                const local_index = x + y * this.held_item.width;
+                                const i = (leftmost+x) + (topmost+y) * this.map.width
+
+                                this.map.layers[TILE_LAYER].tiles[i] =
+                                    this.held_item.tile_layer[local_index];
+
+                                this.map.layers[COLLISION_LAYER].tiles[i] =
+                                    this.held_item.collision_layer[local_index];
+
+                                this.map.layers[PICKUP_LAYER].tiles[i] =
+                                    this.held_item.pickup_tile;
+                            }
                         }
-                    }
 
-                    this.held_item = null;
-                    this.inventory[this.active_inventory_slot] = null;
-                    this.active_inventory_slot = null;
-                    this.state = states.PLATFORMING;
+                        this.held_item = null;
+                        this.inventory[this.active_inventory_slot] = null;
+                        this.active_inventory_slot = null;
+                        this.state = states.PLATFORMING;
+                    }
                 }
             }
 
@@ -268,6 +300,25 @@ export class Player extends GameObject {
                 this.state = states.PLATFORMING;
                 this.active_inventory_slot = null;
                 this.held_item = null;
+            }
+
+            const tiles_down = gfx.height / this.map.tile_height;
+            const tiles_across = gfx.width / this.map.tile_width;
+
+            const leftmost = Math.max(0, Math.floor((this.x-gfx.width/2)/this.map.tile_width));
+            const topmost = Math.max(0, Math.floor((this.y-gfx.height/2)/this.map.tile_height));
+            const rightmost = Math.min(this.map.width-1, leftmost+tiles_across);
+            const bottommost = Math.min(this.map.height-1, topmost+tiles_down);
+
+            this.sparkle_anim.update(dt);
+            for(let y=topmost; y<bottommost; ++y) {
+                for(let x=leftmost; x<rightmost; ++x) {
+                    const index = x + y * this.map.width;
+                    if(this.map.layers[PICKUP_LAYER].tiles[index] !== 0) {
+                        this.sparkle_anim.draw(x*this.map.tile_width,
+                                               y*this.map.tile_height);
+                    }
+                }
             }
         }
 
