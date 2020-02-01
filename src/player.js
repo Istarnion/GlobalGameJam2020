@@ -15,7 +15,7 @@ const LADDER = 4;
 export class Player extends GameObject {
     constructor(game) {
         super();
-        this.width = 12;
+        this.width = 6;
         this.height = 12;
 
         this.idle_anim = new Animation('player_idle');
@@ -77,8 +77,7 @@ export class Player extends GameObject {
             this.curr_anim = this.idle_anim;
         }
 
-        if(this.collidesAt(this.x-this.width/2, this.y+1) ||
-           this.collidesAt(this.x+this.width/2, this.y+1)) {
+        if(this.collidesAt(this.x, this.y+1)) {
             this.fall_speed = 0;
         }
         else {
@@ -93,14 +92,14 @@ export class Player extends GameObject {
         const foottile = this.tileAt(this.x, this.y);
         if(foottile === STAIRS_LEFT || foottile === STAIRS_RIGHT) {
             const base_y = Math.floor(this.y / this.map.tile_height) * this.map.tile_height;
-            const t = (this.x % this.map.tile_width) / this.map.tile_width;
-            // console.log(base_y, t);
 
             if(foottile === STAIRS_LEFT) {
-                this.y = Math.floor(base_y + this.map.tile_height * t)-1;
+                const t = ((this.x-this.width/2) % this.map.tile_width) / this.map.tile_width;
+                this.y = Math.floor(base_y + this.map.tile_height * t)-2;
             }
             else {
-                this.y = Math.floor(base_y + (this.map.tile_height-1) * (1-t))-1;
+                const t = ((this.x+this.width/2) % this.map.tile_width) / this.map.tile_width;
+                this.y = Math.floor(base_y + (this.map.tile_height-1) * (1-t))-2;
             }
         }
         else if(foottile === LADDER) {

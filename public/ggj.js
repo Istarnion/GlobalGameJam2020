@@ -3805,14 +3805,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "animations", function() { return animations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "maps", function() { return maps; });
 var images = {
-  // EXAMPLE:
-  // menuBG: "res/sprites/MenuScreenBackground.png",
-  // Test
   testtiles: "res/testtiles.png",
   character: "res/Character.png"
 };
 var animations = {
-  // EXAMPLE
   player_idle: {
     image: "character",
     timePerFrame: 0.1,
@@ -3973,27 +3969,8 @@ var animations = {
     looping: 'loop',
     frames: []
   }
-  /*
-  block: {
-      image: "block",
-      timePerFrame: 0.1,
-      looping: "once", (supports once, loop, and ping-pong)
-      frames: [
-          { x: 0, y: 0, w: 32, h: 32 },
-          { x: 32, y: 0, w: 32, h: 32 },
-          { x: 64, y: 0, w: 32, h: 32 }
-      ]
-  }
-  */
-
 };
 var maps = {
-  // EXAMPLE
-
-  /*
-  overworld: "res/maps/overworld.json"
-  */
-  // Test
   testmap: "res/testmap.json"
 };
 
@@ -4897,7 +4874,7 @@ function (_GameObject) {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Player);
 
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(Player).call(this));
-    _this.width = 12;
+    _this.width = 6;
     _this.height = 12;
     _this.idle_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_idle');
     _this.idle_anim.anchor_x = 0.5;
@@ -4952,7 +4929,7 @@ function (_GameObject) {
         this.curr_anim = this.idle_anim;
       }
 
-      if (this.collidesAt(this.x - this.width / 2, this.y + 1) || this.collidesAt(this.x + this.width / 2, this.y + 1)) {
+      if (this.collidesAt(this.x, this.y + 1)) {
         this.fall_speed = 0;
       } else {
         this.fall_speed += 4;
@@ -4968,12 +4945,14 @@ function (_GameObject) {
 
       if (foottile === STAIRS_LEFT || foottile === STAIRS_RIGHT) {
         var base_y = Math.floor(this.y / this.map.tile_height) * this.map.tile_height;
-        var t = this.x % this.map.tile_width / this.map.tile_width; // console.log(base_y, t);
 
         if (foottile === STAIRS_LEFT) {
-          this.y = Math.floor(base_y + this.map.tile_height * t) - 1;
+          var t = (this.x - this.width / 2) % this.map.tile_width / this.map.tile_width;
+          this.y = Math.floor(base_y + this.map.tile_height * t) - 2;
         } else {
-          this.y = Math.floor(base_y + (this.map.tile_height - 1) * (1 - t)) - 1;
+          var _t = (this.x + this.width / 2) % this.map.tile_width / this.map.tile_width;
+
+          this.y = Math.floor(base_y + (this.map.tile_height - 1) * (1 - _t)) - 2;
         }
       } else if (foottile === LADDER) {
         this.fall_speed = 0;

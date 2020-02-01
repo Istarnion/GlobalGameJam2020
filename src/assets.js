@@ -1,13 +1,9 @@
 export const images = {
-    // EXAMPLE:
-    // menuBG: "res/sprites/MenuScreenBackground.png",
-    // Test
     testtiles: "res/testtiles.png",
     character: "res/Character.png"
 };
 
 export const animations = {
-    // EXAMPLE
     player_idle: {
         image: "character",
         timePerFrame: 0.1,
@@ -98,27 +94,9 @@ export const animations = {
         frames: [
         ]
     }
-
-    /*
-    block: {
-        image: "block",
-        timePerFrame: 0.1,
-        looping: "once", (supports once, loop, and ping-pong)
-        frames: [
-            { x: 0, y: 0, w: 32, h: 32 },
-            { x: 32, y: 0, w: 32, h: 32 },
-            { x: 64, y: 0, w: 32, h: 32 }
-        ]
-    }
-    */
 };
 
 export const maps = {
-    // EXAMPLE
-    /*
-    overworld: "res/maps/overworld.json"
-    */
-    // Test
     testmap: "res/testmap.json"
 };
 
