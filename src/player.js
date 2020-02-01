@@ -3,7 +3,6 @@ import { gfx } from "./graphics.js";
 import { input } from "./input.js";
 import { camera } from "./camera.js";
 import { Animation } from "./animation.js";
-import { states } from "./game_room.js";
 
 const MAX_FALL_SPEED = 128;
 const CLIMB_SPEED = 24;
@@ -13,9 +12,17 @@ const STAIRS_LEFT = 2;
 const STAIRS_RIGHT = 3;
 const LADDER = 4;
 
+const states = {
+    PLATFORMING: 0,
+    TILE_PLACING: 1
+};
+
 export class Player extends GameObject {
     constructor(game) {
         super();
+
+        this.state = states.PLATFORMING;
+
         this.width = 6;
         this.height = 12;
 
@@ -57,7 +64,7 @@ export class Player extends GameObject {
 
     update(dt) {
 
-        if(this.game.state == states.PLATFORMING) {
+        if(this.state == states.PLATFORMING) {
             let movement_x = 0;
             if(input.isKeyDown('a', 'left')) {
                 movement_x -= 1;
@@ -129,14 +136,29 @@ export class Player extends GameObject {
             camera.target(this.x, this.y);
 
             if(can_open_ipad && input.isKeyJustPressed('e')) {
-                this.game.state = states.TILE_PLACING;
+                this.state = states.TILE_PLACING;
             }
         }
         else {
+            const mouse_x = input.mouse_x + camera.x;
+            const mouse_y = input.mouse_y + camera.y;
+
+            const tile_x = Math.floor(mouse_x / this.map.tile_width);
+            const tile_y = Math.floor(mouse_y / this.map.tile_height);
+            const tile_index = tile_x + tile_y * this.map.width;
+
+            if(input.isKeyJustPressed('mouse')) {
+                this.map.layers[0].tiles[tile_index] = 1;
+            }
+
+            gfx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+            gfx.fillRect(tile_x*this.map.tile_width, tile_y*this.map.tile_height,
+                         this.map.tile_width, this.map.tile_height);
+
             // Do ipad animations
             //
             if(input.isKeyJustPressed('e')) {
-                this.game.state = states.PLATFORMING;
+                this.state = states.PLATFORMING;
             }
         }
 
