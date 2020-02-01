@@ -1,3 +1,6 @@
+const WIDTH = 640;
+const HEIGHT = 480;
+
 export const camera = {
     x: 0,
     y: 0,
@@ -8,8 +11,16 @@ export const camera = {
 };
 
 camera.target = (x, y) => {
-    camera.x = x-320;
-    camera.y = y-240;
+    x -= WIDTH/2;
+    y -= HEIGHT/2;
+
+    if(x        <  camera.bounds_left)   x = camera.bounds_left;
+    if(x+WIDTH  >= camera.bounds_right)  x = camera.bounds_right-WIDTH;
+    if(y        <  camera.bounds_top)    y = camera.bounds_top;
+    if(y+HEIGHT >= camera.bounds_bottom) y = camera.bounds_bottom-HEIGHT;
+
+    camera.x = x;
+    camera.y = y;
 };
 
 camera.setBounds = (left, right, top, bottom) => {
