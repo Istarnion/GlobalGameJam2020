@@ -5049,7 +5049,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var MAX_FALL_SPEED = 128;
-var CLIMB_SPEED = 24;
+var WALK_SPEED = 52;
+var CLIMB_SPEED = 52;
 var TILE_LAYER = 0;
 var COLLISION_LAYER = 1;
 var PICKUP_LAYER = 2;
@@ -5057,6 +5058,15 @@ var STAIRS_RIGHT = 66;
 var STAIRS_LEFT = 67;
 var LADDER = 68;
 var BACKPACK = 19;
+var PICKUPABLES = {
+  backpack: 19,
+  muffin: 31,
+  eye: 42,
+  die: 48,
+  wine: 53,
+  cup: 57,
+  strawberry: 61
+};
 var states = {
   PLATFORMING: 0,
   TILE_PLACING: 1
@@ -5073,6 +5083,7 @@ function (_GameObject) {
 
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(Player).call(this));
     _this.state = states.PLATFORMING;
+    _this.pickedup_pickups = [];
     _this.inventory = [null];
     _this.active_inventory_slot = null;
     _this.held_item = null;
@@ -5100,7 +5111,6 @@ function (_GameObject) {
     _this.curr_anim = _this.idle_anim;
     _this.game = game;
     _this.map = game.map;
-    _this.speed = 48;
     _this.fall_speed = 0;
     _this.x = _this.map.properties.player_start_x * _this.map.tile_width;
     _this.y = _this.map.properties.player_start_y * _this.map.tile_height;
@@ -5124,7 +5134,7 @@ function (_GameObject) {
         }
 
         if (Math.abs(movement_x) > 0) {
-          this.moveX(movement_x * this.speed * dt);
+          this.moveX(movement_x * WALK_SPEED * dt);
 
           if (movement_x > 0) {
             this.curr_anim = this.walk_right_anim;
@@ -5179,13 +5189,23 @@ function (_GameObject) {
           this.curr_anim = this.climbing_anim;
         }
 
-        var centertile = this.tileAt(this.x, this.y - this.height / 2);
+        var centertile_index = Math.floor(this.x / this.map.tile_width) + Math.floor(this.y / this.map.tile_height) * this.map.width;
+        var centertile = this.map.layers[TILE_LAYER].tiles[centertile_index];
 
-        if (centertile === BACKPACK) {
-          // Pickup backpack
-          this.inventory.push(null);
-          var tile_index = Math.floor(this.x / this.map.tile_width) + Math.floor(this.y / this.map.tile_height) * this.map.width;
-          this.map.layers[0].tiles[tile_index] = 0;
+        for (var pickupable in PICKUPABLES) {
+          var tile = PICKUPABLES[pickupable];
+
+          if (centertile === tile) {
+            if (pickupable === 'backpack') {
+              // Pickup backpack
+              this.inventory.push(null);
+            } else if (pickupable === 'strawberry') {// WIN
+            } else {
+              this.pickedup_pickups.push(pickupable);
+            }
+
+            this.map.layers[0].tiles[centertile_index] = 0;
+          }
         }
 
         this.moveY(this.fall_speed * dt);
@@ -5198,11 +5218,9 @@ function (_GameObject) {
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
           var tile_x = Math.floor((_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].x) / this.map.tile_width);
           var tile_y = Math.floor((_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].y) / this.map.tile_height);
-
-          var _tile_index = tile_x + tile_y * this.map.width;
-
-          var collision_tile = this.map.layers[COLLISION_LAYER].tiles[_tile_index];
-          console.log(tile_x, tile_y, _tile_index, collision_tile);
+          var tile_index = tile_x + tile_y * this.map.width;
+          var collision_tile = this.map.layers[COLLISION_LAYER].tiles[tile_index];
+          console.log(tile_x, tile_y, tile_index, collision_tile);
         }
       } else {
         var mouse_x = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].x;
@@ -5212,19 +5230,19 @@ function (_GameObject) {
 
         var _tile_y = Math.floor(mouse_y / this.map.tile_height);
 
-        var _tile_index2 = _tile_x + _tile_y * this.map.width;
+        var _tile_index = _tile_x + _tile_y * this.map.width;
 
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
           if (this.active_inventory_slot === null) {
             // Try pick up tile
-            var pickup_layer_tile = this.map.layers[PICKUP_LAYER].tiles[_tile_index2];
+            var pickup_layer_tile = this.map.layers[PICKUP_LAYER].tiles[_tile_index];
             var can_pickup = pickup_layer_tile !== 0 && pickup_layer_tile !== 65;
             var first_open_inventory_slot = 0;
 
             for (var i = 0; i < this.inventory.length && can_pickup; ++i) {
               if (this.inventory[i] !== null) {
                 ++first_open_inventory_slot;
-              }
+              } else break;
             }
 
             if (can_pickup && first_open_inventory_slot < this.inventory.length) {
@@ -5261,7 +5279,7 @@ function (_GameObject) {
 
               this.inventory[first_open_inventory_slot] = item; // REMOVE ITEM
 
-              var tile_indices_to_remove = [_tile_index2];
+              var tile_indices_to_remove = [_tile_index];
               var tile_index_deltas_to_check = [];
 
               for (var y = 0; y < item.height; ++y) {
@@ -5276,8 +5294,8 @@ function (_GameObject) {
               for (var _i = 0, _tile_index_deltas_to = tile_index_deltas_to_check; _i < _tile_index_deltas_to.length; _i++) {
                 var td = _tile_index_deltas_to[_i];
 
-                if (this.map.layers[PICKUP_LAYER].tiles[_tile_index2 + td] === pickup_layer_tile) {
-                  tile_indices_to_remove.push(_tile_index2 + td);
+                if (this.map.layers[PICKUP_LAYER].tiles[_tile_index + td] === pickup_layer_tile) {
+                  tile_indices_to_remove.push(_tile_index + td);
                 }
               }
 

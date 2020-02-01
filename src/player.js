@@ -7,7 +7,8 @@ import { items } from "./inventory_item.js";
 import { BlockFadeEffect } from "./block_fade_effect.js";
 
 const MAX_FALL_SPEED = 128;
-const CLIMB_SPEED = 24;
+const WALK_SPEED = 52
+const CLIMB_SPEED = 52;
 
 const TILE_LAYER = 0;
 const COLLISION_LAYER = 1;
@@ -17,6 +18,16 @@ const STAIRS_RIGHT = 66;
 const STAIRS_LEFT = 67;
 const LADDER = 68;
 const BACKPACK = 19;
+
+const PICKUPABLES = {
+    backpack: 19,
+    muffin: 31,
+    eye: 42,
+    die: 48,
+    wine: 53,
+    cup: 57,
+    strawberry: 61
+};
 
 const states = {
     PLATFORMING: 0,
@@ -29,6 +40,7 @@ export class Player extends GameObject {
 
         this.state = states.PLATFORMING;
 
+        this.pickedup_pickups = [];
         this.inventory = [null];
         this.active_inventory_slot = null;
         this.held_item = null;
@@ -67,7 +79,6 @@ export class Player extends GameObject {
         this.game = game;
         this.map = game.map;
 
-        this.speed = 48;
         this.fall_speed = 0;
 
         this.x = this.map.properties.player_start_x * this.map.tile_width;
@@ -90,7 +101,7 @@ export class Player extends GameObject {
             }
 
             if(Math.abs(movement_x) > 0) {
-                this.moveX(movement_x * this.speed * dt);
+                this.moveX(movement_x * WALK_SPEED * dt);
                 if(movement_x > 0) {
                     this.curr_anim = this.walk_right_anim;
                 }
@@ -146,12 +157,24 @@ export class Player extends GameObject {
                 this.curr_anim = this.climbing_anim;
             }
 
-            const centertile = this.tileAt(this.x, this.y - this.height/2);
-            if(centertile === BACKPACK) {
-                // Pickup backpack
-                this.inventory.push(null);
-                const tile_index = Math.floor(this.x/this.map.tile_width) + Math.floor(this.y/this.map.tile_height) * this.map.width;
-                this.map.layers[0].tiles[tile_index] = 0;
+            const centertile_index = Math.floor(this.x/this.map.tile_width) + Math.floor(this.y/this.map.tile_height) * this.map.width;
+            const centertile = this.map.layers[TILE_LAYER].tiles[centertile_index];
+            for(const pickupable in PICKUPABLES) {
+                const tile = PICKUPABLES[pickupable];
+                if(centertile === tile) {
+                    if(pickupable === 'backpack') {
+                        // Pickup backpack
+                        this.inventory.push(null);
+                    }
+                    else if(pickupable === 'strawberry') {
+                        // WIN
+                    }
+                    else {
+                        this.pickedup_pickups.push(pickupable);
+                    }
+
+                    this.map.layers[0].tiles[centertile_index] = 0;
+                }
             }
 
             this.moveY(this.fall_speed * dt);
@@ -189,6 +212,7 @@ export class Player extends GameObject {
                         if(this.inventory[i] !== null) {
                             ++first_open_inventory_slot;
                         }
+                        else break;
                     }
 
                     if(can_pickup && first_open_inventory_slot < this.inventory.length) {
