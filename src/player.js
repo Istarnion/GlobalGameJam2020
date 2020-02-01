@@ -7,10 +7,10 @@ import { Animation } from "./animation.js";
 const MAX_FALL_SPEED = 128;
 const CLIMB_SPEED = 24;
 
-const COLLISION_LAYER = 0;
-const STAIRS_LEFT = 2;
-const STAIRS_RIGHT = 3;
-const LADDER = 4;
+const COLLISION_LAYER = 1;
+const STAIRS_RIGHT = 50;
+const STAIRS_LEFT = 51;
+const LADDER = 52;
 
 const states = {
     PLATFORMING: 0,
@@ -54,9 +54,8 @@ export class Player extends GameObject {
         this.speed = 48;
         this.fall_speed = 0;
 
-        // TODO: Get x and y from map
-        this.x = gfx.width/2;
-        this.y = gfx.height/2;
+        this.x = this.map.properties.player_start_x * this.map.tile_width;
+        this.y = this.map.properties.player_start_y * this.map.tile_height;
 
         this.remainder_x = 0;
         this.remainder_y = 0;

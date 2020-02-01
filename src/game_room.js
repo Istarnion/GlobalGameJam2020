@@ -8,7 +8,7 @@ import { input } from "./input.js";
 export class GameRoom extends Room {
     constructor() {
         super();
-        this.map = new TiledMap("testmap");
+        this.map = new TiledMap("dungeon");
         this.arena = new Arena();
 
         this.arena.add(new Player(this));
@@ -18,7 +18,7 @@ export class GameRoom extends Room {
         gfx.save();
         gfx.translate(-camera.x, -camera.y);
 
-        this.map.draw();
+        this.map.drawLayer(0);
 
         this.arena.update(dt);
 

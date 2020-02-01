@@ -3805,8 +3805,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "animations", function() { return animations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "maps", function() { return maps; });
 var images = {
-  testtiles: "res/testtiles.png",
-  character: "res/Character.png"
+  character: "res/Character.png",
+  FlisesettGGJ2020: "res/FlisesettGGJ2020.png"
 };
 var animations = {
   player_idle: {
@@ -3971,7 +3971,7 @@ var animations = {
   }
 };
 var maps = {
-  testmap: "res/testmap.json"
+  dungeon: "res/DD_Map.json"
 };
 
 /***/ }),
@@ -3992,9 +3992,9 @@ var camera = {
   x: 0,
   y: 0,
   bounds_left: 0,
-  bounds_right: 640,
+  bounds_right: 100 * 16,
   bounds_top: 0,
-  bounds_bottom: 480
+  bounds_bottom: 100 * 16
 };
 
 camera.target = function (x, y) {
@@ -4182,12 +4182,11 @@ var roomStack = new RoomStack();
 /*!**************************!*\
   !*** ./src/game_room.js ***!
   \**************************/
-/*! exports provided: states, GameRoom */
+/*! exports provided: GameRoom */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "states", function() { return states; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GameRoom", function() { return GameRoom; });
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
@@ -4219,10 +4218,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var states = {
-  PLATFORMING: 0,
-  TILE_PLACING: 1
-};
 var GameRoom =
 /*#__PURE__*/
 function (_Room) {
@@ -4234,8 +4229,7 @@ function (_Room) {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, GameRoom);
 
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(GameRoom).call(this));
-    _this.state = states.PLATFORMING;
-    _this.map = new _tiled_map_js__WEBPACK_IMPORTED_MODULE_7__["TiledMap"]("testmap");
+    _this.map = new _tiled_map_js__WEBPACK_IMPORTED_MODULE_7__["TiledMap"]("dungeon");
     _this.arena = new _game_js__WEBPACK_IMPORTED_MODULE_6__["Arena"]();
 
     _this.arena.add(new _player_js__WEBPACK_IMPORTED_MODULE_8__["Player"](_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this)));
@@ -4248,40 +4242,9 @@ function (_Room) {
     value: function update(dt) {
       _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].save();
       _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].translate(-_camera_js__WEBPACK_IMPORTED_MODULE_10__["camera"].x, -_camera_js__WEBPACK_IMPORTED_MODULE_10__["camera"].y);
-      this.map.draw();
-
-      switch (this.state) {
-        case states.PLATFORMING:
-          // Do nothing special, I think
-          break;
-
-        case states.TILE_PLACING:
-          this.updateTilePlacing(dt);
-          break;
-
-        default:
-          console.err("GameRoom is in an invalid state ".concat(this.state));
-          break;
-      }
-
+      this.map.drawLayer(0);
       this.arena.update(dt);
       _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].restore();
-    }
-  }, {
-    key: "updateTilePlacing",
-    value: function updateTilePlacing(dt) {
-      var mouse_x = _input_js__WEBPACK_IMPORTED_MODULE_11__["input"].mouse_x + _camera_js__WEBPACK_IMPORTED_MODULE_10__["camera"].x;
-      var mouse_y = _input_js__WEBPACK_IMPORTED_MODULE_11__["input"].mouse_y + _camera_js__WEBPACK_IMPORTED_MODULE_10__["camera"].y;
-      var tile_x = Math.floor(mouse_x / this.map.tile_width);
-      var tile_y = Math.floor(mouse_y / this.map.tile_height);
-      var tile_index = tile_x + tile_y * this.map.width;
-
-      if (_input_js__WEBPACK_IMPORTED_MODULE_11__["input"].isKeyJustPressed('mouse')) {
-        this.map.layers[0].tiles[tile_index] = 1;
-      }
-
-      _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].fillStyle = 'rgba(0, 255, 0, 0.5)';
-      _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].fillRect(tile_x * this.map.tile_width, tile_y * this.map.tile_height, this.map.tile_width, this.map.tile_height);
     }
   }]);
 
@@ -4887,8 +4850,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
 /* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./camera.js */ "./src/camera.js");
 /* harmony import */ var _animation_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./animation.js */ "./src/animation.js");
-/* harmony import */ var _game_room_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./game_room.js */ "./src/game_room.js");
-
 
 
 
@@ -4901,10 +4862,14 @@ __webpack_require__.r(__webpack_exports__);
 
 var MAX_FALL_SPEED = 128;
 var CLIMB_SPEED = 24;
-var COLLISION_LAYER = 0;
-var STAIRS_LEFT = 2;
-var STAIRS_RIGHT = 3;
-var LADDER = 4;
+var COLLISION_LAYER = 1;
+var STAIRS_RIGHT = 50;
+var STAIRS_LEFT = 51;
+var LADDER = 52;
+var states = {
+  PLATFORMING: 0,
+  TILE_PLACING: 1
+};
 var Player =
 /*#__PURE__*/
 function (_GameObject) {
@@ -4916,6 +4881,7 @@ function (_GameObject) {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Player);
 
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(Player).call(this));
+    _this.state = states.PLATFORMING;
     _this.width = 6;
     _this.height = 12;
     _this.idle_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('player_idle');
@@ -4937,10 +4903,9 @@ function (_GameObject) {
     _this.game = game;
     _this.map = game.map;
     _this.speed = 48;
-    _this.fall_speed = 0; // TODO: Get x and y from map
-
-    _this.x = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / 2;
-    _this.y = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height / 2;
+    _this.fall_speed = 0;
+    _this.x = _this.map.properties.player_start_x * _this.map.tile_width;
+    _this.y = _this.map.properties.player_start_y * _this.map.tile_height;
     _this.remainder_x = 0;
     _this.remainder_y = 0;
     return _this;
@@ -4949,7 +4914,7 @@ function (_GameObject) {
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Player, [{
     key: "update",
     value: function update(dt) {
-      if (this.game.state == _game_room_js__WEBPACK_IMPORTED_MODULE_10__["states"].PLATFORMING) {
+      if (this.state == states.PLATFORMING) {
         var movement_x = 0;
 
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('a', 'left')) {
@@ -5020,13 +4985,25 @@ function (_GameObject) {
         _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].target(this.x, this.y);
 
         if (can_open_ipad && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
-          this.game.state = _game_room_js__WEBPACK_IMPORTED_MODULE_10__["states"].TILE_PLACING;
+          this.state = states.TILE_PLACING;
         }
       } else {
-        // Do ipad animations
+        var mouse_x = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].x;
+        var mouse_y = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y + _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].y;
+        var tile_x = Math.floor(mouse_x / this.map.tile_width);
+        var tile_y = Math.floor(mouse_y / this.map.tile_height);
+        var tile_index = tile_x + tile_y * this.map.width;
+
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
+          this.map.layers[0].tiles[tile_index] = 1;
+        }
+
+        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillStyle = 'rgba(0, 255, 0, 0.5)';
+        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillRect(tile_x * this.map.tile_width, tile_y * this.map.tile_height, this.map.tile_width, this.map.tile_height); // Do ipad animations
         //
+
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
-          this.game.state = _game_room_js__WEBPACK_IMPORTED_MODULE_10__["states"].PLATFORMING;
+          this.state = states.PLATFORMING;
         }
       } // Draw
 
@@ -5168,7 +5145,7 @@ function createTileset(ts) {
       }
 
       anim.current = anim.frames[0];
-      result.animated_tiles[parseInt(tile)] = anim;
+      result.animated_tiles[ts.tiles[tile].id] = anim;
     }
   }
 
@@ -5229,7 +5206,8 @@ function () {
         if (l.type === "tilelayer") {
           var layer = {
             tiles: l.data,
-            properties: {}
+            properties: {},
+            name: l.name
           };
 
           if (typeof l.properties !== 'undefined') {
@@ -5332,35 +5310,14 @@ function () {
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(TiledMap, [{
-    key: "draw",
-    value: function draw() {
-      var _iteratorNormalCompletion7 = true;
-      var _didIteratorError7 = false;
-      var _iteratorError7 = undefined;
+    key: "drawLayer",
+    value: function drawLayer(i) {
+      var layer = this.layers[i];
 
-      try {
-        for (var _iterator7 = this.layers[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-          var layer = _step7.value;
-
-          for (var y = 0; y < this.height; ++y) {
-            for (var x = 0; x < this.width; ++x) {
-              var index = x + y * this.width;
-              this.tileset.drawTile(layer.tiles[index], x * this.tile_width, y * this.tile_height);
-            }
-          }
-        }
-      } catch (err) {
-        _didIteratorError7 = true;
-        _iteratorError7 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion7 && _iterator7["return"] != null) {
-            _iterator7["return"]();
-          }
-        } finally {
-          if (_didIteratorError7) {
-            throw _iteratorError7;
-          }
+      for (var y = 0; y < this.height; ++y) {
+        for (var x = 0; x < this.width; ++x) {
+          var index = x + y * this.width;
+          this.tileset.drawTile(layer.tiles[index], x * this.tile_width, y * this.tile_height);
         }
       }
     }

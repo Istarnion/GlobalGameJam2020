@@ -1,6 +1,6 @@
 export const images = {
-    testtiles: "res/testtiles.png",
-    character: "res/Character.png"
+    character: "res/Character.png",
+    FlisesettGGJ2020: "res/FlisesettGGJ2020.png"
 };
 
 export const animations = {
@@ -97,6 +97,6 @@ export const animations = {
 };
 
 export const maps = {
-    testmap: "res/testmap.json"
+    dungeon: "res/DD_Map.json"
 };
 

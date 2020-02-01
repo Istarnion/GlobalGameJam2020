@@ -24,7 +24,7 @@ function createTileset(ts) {
 
             anim.current = anim.frames[0];
 
-            result.animated_tiles[parseInt(tile)] = anim;
+            result.animated_tiles[ts.tiles[tile].id] = anim;
         }
     }
 
@@ -55,7 +55,8 @@ export class TiledMap {
             if(l.type === "tilelayer") {
                 const layer = {
                     tiles: l.data,
-                    properties: {}
+                    properties: {},
+                    name: l.name
                 };
 
                 if(typeof l.properties !== 'undefined') {
@@ -86,15 +87,14 @@ export class TiledMap {
         }
     }
 
-    draw() {
-        for(const layer of this.layers) {
-            for(var y=0; y<this.height; ++y) {
-                for(var x=0; x<this.width; ++x) {
-                    const index = x + y * this.width;
-                    this.tileset.drawTile(layer.tiles[index],
-                                          x*this.tile_width,
-                                          y*this.tile_height);
-                }
+    drawLayer(i) {
+        const layer = this.layers[i];
+        for(var y=0; y<this.height; ++y) {
+            for(var x=0; x<this.width; ++x) {
+                const index = x + y * this.width;
+                this.tileset.drawTile(layer.tiles[index],
+                                      x*this.tile_width,
+                                      y*this.tile_height);
             }
         }
     }

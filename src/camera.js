@@ -5,9 +5,9 @@ export const camera = {
     x: 0,
     y: 0,
     bounds_left: 0,
-    bounds_right: 640,
+    bounds_right: 100*16,
     bounds_top: 0,
-    bounds_bottom: 480
+    bounds_bottom: 100*16
 };
 
 camera.target = (x, y) => {
