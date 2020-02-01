@@ -4087,8 +4087,8 @@ var input = {
   keyUpListeners: [],
   specificKeyUpListeners: {},
   // Arguments: Either a keyname and function, or just a function
-  isKeyDown: function isKeyDown(key) {
-    return !!this.keyStates[key][0];
+  isKeyDown: function isKeyDown(key, altKey) {
+    return !!this.keyStates[key][0] || altKey && !!this.keyStates[altKey][0];
   },
   isKeyJustPressed: function isKeyJustPressed(key) {
     if (!this.keyStates[key]) return false;
@@ -4402,21 +4402,45 @@ var MusicManager =
 /*#__PURE__*/
 function () {
   function MusicManager() {
-    var _this = this;
-
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, MusicManager);
 
     this.music = {};
-    this.music.startDrone = new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+    this.music.menuLoop = new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
       src: ['res/sounds/Menu_Loop.mp3'],
-      loop: true,
-      onload: function onload() {
-        _this.music.startDrone.play();
-      }
+      loop: true
     });
+    this.music.gameLoop = new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+      src: ['res/sounds/Game_Loop.mp3'],
+      loop: true
+    });
+    this.music.creditsLoop = new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+      src: ['res/sounds/Credits_Loop.mp3'],
+      loop: true
+    });
+    this.setGameState();
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(MusicManager, [{
+    key: "setMenuState",
+    value: function setMenuState() {
+      this.music.gameLoop.stop();
+      this.music.menuLoop.play();
+    }
+  }, {
+    key: "setGameState",
+    value: function setGameState() {
+      this.music.creditsLoop.stop();
+      this.music.menuLoop.stop();
+      this.music.gameLoop.play();
+    }
+  }, {
+    key: "setCreditsState",
+    value: function setCreditsState() {
+      this.music.menuLoop.stop();
+      this.music.gameLoop.stop();
+      this.music.creditsLoop.play();
+    }
+  }, {
     key: "update",
     value: function update(deltaTime) {}
   }]);
@@ -4462,9 +4486,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var MAX_FALL_SPEED = 128;
+var CLIMB_SPEED = 24;
 var COLLISION_LAYER = 0;
 var STAIRS_LEFT = 2;
 var STAIRS_RIGHT = 3;
+var LADDER = 4;
 var Player =
 /*#__PURE__*/
 function (_GameObject) {
@@ -4495,11 +4521,11 @@ function (_GameObject) {
     value: function update(dt) {
       var movement_x = 0;
 
-      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('a') || _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('left')) {
+      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('a', 'left')) {
         movement_x -= 1;
       }
 
-      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('d') || _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('right')) {
+      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('d', 'right')) {
         movement_x += 1;
       }
 
@@ -4515,8 +4541,6 @@ function (_GameObject) {
         if (this.fall_speed > MAX_FALL_SPEED) {
           this.fall_speed = MAX_FALL_SPEED;
         }
-
-        this.moveY(this.fall_speed * dt);
       }
 
       var foottile = this.tileAt(this.x, this.y);
@@ -4530,8 +4554,19 @@ function (_GameObject) {
         } else {
           this.y = Math.floor(base_y + (this.map.tile_height - 1) * (1 - t)) - 1;
         }
+      } else if (foottile === LADDER) {
+        this.fall_speed = 0;
+
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('up', 'w')) {
+          this.fall_speed = -CLIMB_SPEED;
+        }
+
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('down', 's')) {
+          this.fall_speed = CLIMB_SPEED;
+        }
       }
 
+      this.moveY(this.fall_speed * dt);
       _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].target(this.x, this.y); // Draw
 
       _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillStyle = 'white';
@@ -4582,7 +4617,7 @@ function (_GameObject) {
     key: "collidesAt",
     value: function collidesAt(x, y) {
       var tile = this.tileAt(x, y);
-      return tile !== 0 && tile !== STAIRS_LEFT && tile !== STAIRS_RIGHT;
+      return tile !== 0 && tile !== STAIRS_LEFT && tile !== STAIRS_RIGHT && tile !== LADDER;
     }
   }, {
     key: "tileAt",

@@ -8,7 +8,7 @@ import { roomStack } from "./game.js";
 
 import { GameRoom } from "./game_room.js";
 
-setGameSize(640, 480);
+setGameSize(320, 240);
 
 gfx.fillText("Loading...", gfx.width / 2, gfx.height / 2);
 

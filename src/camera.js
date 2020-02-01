@@ -1,5 +1,5 @@
-const WIDTH = 640;
-const HEIGHT = 480;
+const WIDTH = 320;
+const HEIGHT = 240;
 
 export const camera = {
     x: 0,
