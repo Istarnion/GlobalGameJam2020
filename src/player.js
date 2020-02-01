@@ -4,10 +4,12 @@ import { input } from "./input.js";
 import { camera } from "./camera.js";
 
 const MAX_FALL_SPEED = 128;
+const CLIMB_SPEED = 24;
 
 const COLLISION_LAYER = 0;
 const STAIRS_LEFT = 2;
 const STAIRS_RIGHT = 3;
+const LADDER = 4;
 
 export class Player extends GameObject {
     constructor(game) {
@@ -31,11 +33,11 @@ export class Player extends GameObject {
 
     update(dt) {
         let movement_x = 0;
-        if(input.isKeyDown('a') || input.isKeyDown('left')) {
+        if(input.isKeyDown('a', 'left')) {
             movement_x -= 1;
         }
 
-        if(input.isKeyDown('d') || input.isKeyDown('right')) {
+        if(input.isKeyDown('d', 'right')) {
             movement_x += 1;
         }
 
@@ -53,7 +55,6 @@ export class Player extends GameObject {
                 this.fall_speed = MAX_FALL_SPEED;
             }
 
-            this.moveY(this.fall_speed * dt);
         }
 
         const foottile = this.tileAt(this.x, this.y);
@@ -69,6 +70,19 @@ export class Player extends GameObject {
                 this.y = Math.floor(base_y + (this.map.tile_height-1) * (1-t))-1;
             }
         }
+        else if(foottile === LADDER) {
+            this.fall_speed = 0;
+
+            if(input.isKeyDown('up', 'w')) {
+                this.fall_speed = -CLIMB_SPEED;
+            }
+
+            if(input.isKeyDown('down', 's')) {
+                this.fall_speed = CLIMB_SPEED;
+            }
+        }
+
+        this.moveY(this.fall_speed * dt);
 
         camera.target(this.x, this.y);
 
@@ -120,7 +134,10 @@ export class Player extends GameObject {
 
     collidesAt(x, y) {
         const tile = this.tileAt(x, y);
-        return tile !== 0 && tile !== STAIRS_LEFT && tile !== STAIRS_RIGHT;
+        return tile !== 0 &&
+               tile !== STAIRS_LEFT &&
+               tile !== STAIRS_RIGHT &&
+               tile !== LADDER;
     }
 
     tileAt(x, y) {

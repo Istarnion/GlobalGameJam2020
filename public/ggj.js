@@ -3616,6 +3616,8 @@ var maps = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "camera", function() { return camera; });
+var WIDTH = 640;
+var HEIGHT = 480;
 var camera = {
   x: 0,
   y: 0,
@@ -3626,8 +3628,14 @@ var camera = {
 };
 
 camera.target = function (x, y) {
-  camera.x = x - 320;
-  camera.y = y - 240;
+  x -= WIDTH / 2;
+  y -= HEIGHT / 2;
+  if (x < camera.bounds_left) x = camera.bounds_left;
+  if (x + WIDTH >= camera.bounds_right) x = camera.bounds_right - WIDTH;
+  if (y < camera.bounds_top) y = camera.bounds_top;
+  if (y + HEIGHT >= camera.bounds_bottom) y = camera.bounds_bottom - HEIGHT;
+  camera.x = x;
+  camera.y = y;
 };
 
 camera.setBounds = function (left, right, top, bottom) {

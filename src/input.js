@@ -5,8 +5,9 @@ export const input = {
     specificKeyUpListeners: {},
 
     // Arguments: Either a keyname and function, or just a function
-    isKeyDown: function(key) {
-        return !!this.keyStates[key][0];
+    isKeyDown: function(key, altKey) {
+        return !!this.keyStates[key][0] ||
+               (altKey && !!this.keyStates[altKey][0]);
     },
 
     isKeyJustPressed: function(key) {
