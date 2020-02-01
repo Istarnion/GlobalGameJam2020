@@ -3,15 +3,18 @@ import { TiledMap } from "./tiled_map.js";
 import { Player } from "./player.js";
 import { gfx } from "./graphics.js";
 import { camera } from "./camera.js";
+import { input } from "./input.js";
 
-const STATE_PLATFORMING = 0;
-const STATE_TILE_PLACING = 1;
+export const states = {
+    PLATFORMING: 0,
+    TILE_PLACING: 1
+};
 
 export class GameRoom extends Room {
 
     constructor() {
         super();
-        this.state = STATE_PLATFORMING;
+        this.state = states.PLATFORMING;
         this.map = new TiledMap("testmap");
         this.arena = new Arena();
 
@@ -25,11 +28,11 @@ export class GameRoom extends Room {
         this.map.draw();
 
         switch(this.state) {
-            case STATE_PLATFORMING:
+            case states.PLATFORMING:
                 // Do nothing special, I think
                 break;
-            case STATE_TILE_PLACING:
-                updateTilePlacing(dt);
+            case states.TILE_PLACING:
+                this.updateTilePlacing(dt);
                 break;
             default:
                 console.err(`GameRoom is in an invalid state ${this.state}`);
@@ -38,11 +41,28 @@ export class GameRoom extends Room {
 
         this.arena.update(dt);
 
+        if(input.isKeyJustPressed('e')) {
+            if(this.state === states.PLATFORMING) {
+                this.state = states.TILE_PLACING;
+            }
+            else {
+                this.state = states.PLATFORMING;
+            }
+        }
+
         gfx.restore();
     }
 
     updateTilePlacing(dt) {
-        // TODO(ole): PLZ
+        const mouse_x = input.mouse_x + camera.x;
+        const mouse_y = input.mouse_y + camera.y;
+
+        const tile_x = Math.floor(mouse_x / this.map.tile_width);
+        const tile_y = Math.floor(mouse_y / this.map.tile_height);
+
+        gfx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+        gfx.fillRect(tile_x*this.map.tile_width, tile_y*this.map.tile_height,
+                     this.map.tile_width, this.map.tile_height);
     }
 }
 

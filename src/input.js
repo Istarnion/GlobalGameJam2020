@@ -1,4 +1,6 @@
 export const input = {
+    mouse_x: 0,
+    mouse_y: 0,
     keyDownListeners: [],
     specificKeyDownListeners: {},
     keyUpListeners: [],
@@ -180,5 +182,15 @@ window.addEventListener("keyup", (e) => {
     if(key) {
         input.keyStates[key][0] = false;
     }
+});
+
+const canvas = document.getElementById('game-canvas');
+canvas.addEventListener("mousemove", (e) => {
+    e.preventDefault();
+    const scale = 320 / canvas.clientWidth;
+    const client_rect = canvas.getClientRects()[0];
+    input.mouse_x = (e.clientX - client_rect.x) * scale;
+    input.mouse_y = (e.clientY - client_rect.y) * scale;
+    return false;
 });
 

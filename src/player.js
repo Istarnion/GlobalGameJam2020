@@ -3,6 +3,7 @@ import { gfx } from "./graphics.js";
 import { input } from "./input.js";
 import { camera } from "./camera.js";
 import { Animation } from "./animation.js";
+import { states } from "./game_room.js";
 
 const MAX_FALL_SPEED = 128;
 const CLIMB_SPEED = 24;
@@ -55,70 +56,75 @@ export class Player extends GameObject {
     }
 
     update(dt) {
-        let movement_x = 0;
-        if(input.isKeyDown('a', 'left')) {
-            movement_x -= 1;
-        }
+        if(this.game.state == states.PLATFORMING) {
+            let movement_x = 0;
+            if(input.isKeyDown('a', 'left')) {
+                movement_x -= 1;
+            }
 
-        if(input.isKeyDown('d', 'right')) {
-            movement_x += 1;
-        }
+            if(input.isKeyDown('d', 'right')) {
+                movement_x += 1;
+            }
 
-        if(Math.abs(movement_x) > 0) {
-            this.moveX(movement_x * this.speed * dt);
-            if(movement_x > 0) {
-                this.curr_anim = this.walk_right_anim;
+            if(Math.abs(movement_x) > 0) {
+                this.moveX(movement_x * this.speed * dt);
+                if(movement_x > 0) {
+                    this.curr_anim = this.walk_right_anim;
+                }
+                else {
+                    this.curr_anim = this.walk_left_anim;
+                }
             }
             else {
-                this.curr_anim = this.walk_left_anim;
-            }
-        }
-        else {
-            this.curr_anim = this.idle_anim;
-        }
-
-        if(this.collidesAt(this.x, this.y+1)) {
-            this.fall_speed = 0;
-        }
-        else {
-            this.fall_speed += 4;
-            if(this.fall_speed > MAX_FALL_SPEED) {
-                this.fall_speed = MAX_FALL_SPEED;
+                this.curr_anim = this.idle_anim;
             }
 
-            this.curr_anim = this.falling_anim;
-        }
-
-        const foottile = this.tileAt(this.x, this.y);
-        if(foottile === STAIRS_LEFT || foottile === STAIRS_RIGHT) {
-            const base_y = Math.floor(this.y / this.map.tile_height) * this.map.tile_height;
-
-            if(foottile === STAIRS_LEFT) {
-                const t = ((this.x-this.width/2) % this.map.tile_width) / this.map.tile_width;
-                this.y = Math.floor(base_y + this.map.tile_height * t)-2;
+            if(this.collidesAt(this.x, this.y+1)) {
+                this.fall_speed = 0;
             }
             else {
-                const t = ((this.x+this.width/2) % this.map.tile_width) / this.map.tile_width;
-                this.y = Math.floor(base_y + (this.map.tile_height-1) * (1-t))-2;
+                this.fall_speed += 4;
+                if(this.fall_speed > MAX_FALL_SPEED) {
+                    this.fall_speed = MAX_FALL_SPEED;
+                }
+
+                this.curr_anim = this.falling_anim;
             }
+
+            const foottile = this.tileAt(this.x, this.y);
+            if(foottile === STAIRS_LEFT || foottile === STAIRS_RIGHT) {
+                const base_y = Math.floor(this.y / this.map.tile_height) * this.map.tile_height;
+
+                if(foottile === STAIRS_LEFT) {
+                    const t = ((this.x-this.width/2) % this.map.tile_width) / this.map.tile_width;
+                    this.y = Math.floor(base_y + this.map.tile_height * t)-2;
+                }
+                else {
+                    const t = ((this.x+this.width/2) % this.map.tile_width) / this.map.tile_width;
+                    this.y = Math.floor(base_y + (this.map.tile_height-1) * (1-t))-2;
+                }
+            }
+            else if(foottile === LADDER) {
+                this.fall_speed = 0;
+
+                if(input.isKeyDown('up', 'w')) {
+                    this.fall_speed = -CLIMB_SPEED;
+                }
+
+                if(input.isKeyDown('down', 's')) {
+                    this.fall_speed = CLIMB_SPEED;
+                }
+
+                this.curr_anim = this.climbing_anim;
+            }
+
+            this.moveY(this.fall_speed * dt);
+
+            camera.target(this.x, this.y);
         }
-        else if(foottile === LADDER) {
-            this.fall_speed = 0;
-
-            if(input.isKeyDown('up', 'w')) {
-                this.fall_speed = -CLIMB_SPEED;
-            }
-
-            if(input.isKeyDown('down', 's')) {
-                this.fall_speed = CLIMB_SPEED;
-            }
-
-            this.curr_anim = this.climbing_anim;
+        else {
+            // Do ipad animations
         }
-
-        this.moveY(this.fall_speed * dt);
-
-        camera.target(this.x, this.y);
 
         // Draw
         this.curr_anim.update(dt);
