@@ -4912,6 +4912,7 @@ function (_GameObject) {
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(Player).call(this));
     _this.state = states.PLATFORMING;
     _this.inventory = [null];
+    _this.active_inventory_slot = null;
     _this.held_tile = null;
     _this.held_tile_collision = null;
     _this.width = 6;
@@ -5029,34 +5030,40 @@ function (_GameObject) {
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
           if (this.held_tile === null) {
             // Try pick up tile
-            this.inventory[0] = [this.map.layers[0].tiles[tile_index], this.map.layers[COLLISION_LAYER].tiles[tile_index]];
-            this.map.layers[0].tiles[tile_index] = 0;
-            this.map.layers[COLLISION_LAYER].tiles[tile_index] = 0;
+            var first_open_inventory_slot = 0;
+
+            for (var i = 0; i < this.inventory.length; ++i) {
+              if (this.inventory[i] !== null) {
+                ++first_open_inventory_slot;
+              }
+            }
+
+            if (first_open_inventory_slot < this.inventory.length) {
+              this.inventory[first_open_inventory_slot] = [this.map.layers[0].tiles[tile_index], this.map.layers[COLLISION_LAYER].tiles[tile_index]];
+              this.map.layers[0].tiles[tile_index] = 0;
+              this.map.layers[COLLISION_LAYER].tiles[tile_index] = 0;
+            }
           } else {
             this.map.layers[0].tiles[tile_index] = this.held_tile;
             this.map.layers[COLLISION_LAYER].tiles[tile_index] = this.held_tile_collision;
             this.held_tile = null;
             this.held_tile_collision = null;
-            this.inventory[0] = null;
+            this.inventory[this.active_inventory_slot] = null;
+            this.active_inventory_slot = null;
           }
         }
 
-        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].globalAlpha = 0.5;
-
         if (this.held_tile === null) {
-          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillStyle = 'rgba(0, 255, 0)';
-          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].fillRect(tile_x * this.map.tile_width, tile_y * this.map.tile_height, this.map.tile_width, this.map.tile_height);
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 16, 16, 16, mouse_x - 8, mouse_y - 8, 16, 16);
         } else {
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].globalAlpha = 0.5;
           this.map.tileset.drawTile(this.held_tile, tile_x * this.map.tile_width, tile_y * this.map.tile_height);
-        }
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].globalAlpha = 1.0;
+        } // Do ipad animations
 
-        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].globalAlpha = 1.0; // Do ipad animations
 
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
           this.state = states.PLATFORMING;
-        } else if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('one')) {
-          this.held_tile = this.inventory[0][0];
-          this.held_tile_collision = this.inventory[0][1];
         }
       } // Draw
 
@@ -5078,6 +5085,21 @@ function (_GameObject) {
 
       for (var i = 0; i < this.inventory.length; ++i) {
         hud_x += 18;
+
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
+          if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x > hud_x && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x <= hud_x + 16 && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y > hud_y && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y <= hud_y + 16) {
+            if (this.inventory[i] === null) {
+              this.held_tile = null;
+              this.held_tile_collision = null;
+              this.active_inventory_slot = null;
+            } else {
+              this.held_tile = this.inventory[i][0];
+              this.held_tile_collision = this.inventory[i][1];
+              this.active_inventory_slot = i;
+            }
+          }
+        }
+
         _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 0, 16, 16, hud_x, hud_y, 16, 16);
 
         if (this.inventory[i] !== null) {
@@ -5110,6 +5132,10 @@ function (_GameObject) {
           }
 
           _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], src_x, 0, 16, 16, hud_x, hud_y, 16, 16);
+
+          if (this.active_inventory_slot === i) {
+            _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 16, 16, 16, hud_x, hud_y, 16, 16);
+          }
         }
       }
     }
