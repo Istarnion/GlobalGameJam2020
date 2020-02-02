@@ -6,7 +6,9 @@ export const images = {
     menubg: "res/MenuScreen_WIP.png",
     buttons: "res/Buttons.png",
     credits: "res/Credits.png",
-    victory: "res/Victory.png"
+    victory: "res/Victory.png",
+    tutorial1: "res/tutorial1.png",
+    tutorial2: "res/tutorial2.png"
 };
 
 export const animations = {

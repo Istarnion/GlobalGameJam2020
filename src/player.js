@@ -344,10 +344,10 @@ export class Player extends GameObject {
             const tiles_down = gfx.height / this.map.tile_height;
             const tiles_across = gfx.width / this.map.tile_width;
 
-            const leftmost = Math.max(0, Math.floor((this.x-gfx.width/2)/this.map.tile_width));
-            const topmost = Math.max(0, Math.floor((this.y-gfx.height/2)/this.map.tile_height));
-            const rightmost = Math.min(this.map.width-1, leftmost+tiles_across);
-            const bottommost = Math.min(this.map.height-1, topmost+tiles_down);
+            const leftmost = Math.max(0, Math.floor((this.x-gfx.width)/this.map.tile_width)-1);
+            const topmost = Math.max(0, Math.floor((this.y-gfx.height)/this.map.tile_height)-1);
+            const rightmost = Math.min(this.map.width, leftmost+2*tiles_across);
+            const bottommost = Math.min(this.map.height, topmost+2*tiles_down);
 
             this.sparkle_anim.update(dt);
             for(let y=topmost; y<bottommost; ++y) {

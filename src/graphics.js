@@ -69,7 +69,9 @@ export const setGameSize = (w, h) => {
 
 // Clear the canvas
 export const clear = () => {
+    gfx.fillStyle = '#140D1C';
     gfx.clearRect(0, 0, gfx.width, gfx.height);
+    gfx.fillRect(0, 0, gfx.width, gfx.height);
 };
 
 // A cache of loaded sprites. Access them by sprites[sprite_name]
