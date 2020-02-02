@@ -6,6 +6,8 @@ import { Animation } from "./animation.js";
 import { items } from "./inventory_item.js";
 import { BlockFadeEffect } from "./block_fade_effect.js";
 import { PickupEffect } from "./pickup_effect.js";
+import { roomStack } from "./game.js";
+import { VictoryRoom } from "./victory.js";
 
 const MAX_FALL_SPEED = 128;
 const WALK_SPEED = 52
@@ -78,6 +80,7 @@ export class Player extends GameObject {
 
         this.curr_anim = this.idle_anim;
         this.can_open_ipad = true;
+        this.grounded = true;
 
         this.game = game;
         this.map = game.map;
@@ -119,6 +122,7 @@ export class Player extends GameObject {
 
             if(this.collidesAt(this.x, this.y+1)) {
                 this.fall_speed = 0;
+                this.grounded = true;
             }
             else {
                 this.can_open_ipad = false;
@@ -128,6 +132,7 @@ export class Player extends GameObject {
                 }
 
                 this.curr_anim = this.falling_anim;
+                this.grounded = false;
             }
 
             const foottile = this.tileAt(this.x, this.y);
@@ -143,6 +148,7 @@ export class Player extends GameObject {
                     const t = ((this.x+this.width/2) % this.map.tile_width) / this.map.tile_width;
                     this.y = Math.floor(base_y + (this.map.tile_height-1) * (1-t))-2;
                 }
+                this.grounded = true;
             }
             else if(foottile === LADDER) {
                 this.can_open_ipad = false;
@@ -170,6 +176,7 @@ export class Player extends GameObject {
                     }
                     else if(pickupable === 'strawberry') {
                         // WIN
+                        roomStack.push(new VictoryRoom(this.pickedup_pickups, this.map));
                     }
                     else {
                         this.pickedup_pickups.push(pickupable);
@@ -355,6 +362,10 @@ export class Player extends GameObject {
         }
 
         // Draw
+        if(!this.grounded) {
+            this.curr_anim = this.falling_anim;
+        }
+
         this.curr_anim.update(dt);
         this.curr_anim.draw(this.x, this.y);
 
@@ -365,7 +376,6 @@ export class Player extends GameObject {
     }
 
     updateHUD() {
-
         let scroll_x = gfx.width/2 - (this.inventory.length+1) * 24 / 2;
         let hud_x = gfx.width/2 - (this.inventory.length+1) * 18 / 2;
         const hud_y = gfx.height - 20;

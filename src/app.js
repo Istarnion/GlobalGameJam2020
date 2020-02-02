@@ -6,7 +6,7 @@ import { musicManager } from "./musicManager";
 import { Timer } from "./timer.js";
 import { roomStack } from "./game.js";
 
-import { GameRoom } from "./game_room.js";
+import { MenuRoom } from "./menu.js";
 
 setGameSize(320, 240);
 
@@ -16,7 +16,7 @@ let prevTime = performance.now();
 
 // THis is run once all assets are loaded. Called from the bottom of this file
 function init() {
-    roomStack.push(new GameRoom());
+    roomStack.push(new MenuRoom());
 }
 
 // Called every frame, starting straight after init() is run.

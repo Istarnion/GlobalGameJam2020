@@ -2,7 +2,11 @@ export const images = {
     character: "res/Character.png",
     FlisesettGGJ2020: "res/FlisesettGGJ2020.png",
     misc: "res/SparkleInventoryAndStuff.png",
-    scroll: "res/InventoryScroll.png"
+    scroll: "res/InventoryScroll.png",
+    menubg: "res/MenuScreen_WIP.png",
+    buttons: "res/Buttons.png",
+    credits: "res/Credits.png",
+    victory: "res/Victory.png"
 };
 
 export const animations = {

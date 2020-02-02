@@ -3744,7 +3744,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _musicManager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./musicManager */ "./src/musicManager.js");
 /* harmony import */ var _timer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./timer.js */ "./src/timer.js");
 /* harmony import */ var _game_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./game.js */ "./src/game.js");
-/* harmony import */ var _game_room_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./game_room.js */ "./src/game_room.js");
+/* harmony import */ var _menu_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./menu.js */ "./src/menu.js");
 
 
 
@@ -3758,7 +3758,7 @@ _graphics_js__WEBPACK_IMPORTED_MODULE_0__["gfx"].fillText("Loading...", _graphic
 var prevTime = performance.now(); // THis is run once all assets are loaded. Called from the bottom of this file
 
 function init() {
-  _game_js__WEBPACK_IMPORTED_MODULE_6__["roomStack"].push(new _game_room_js__WEBPACK_IMPORTED_MODULE_7__["GameRoom"]());
+  _game_js__WEBPACK_IMPORTED_MODULE_6__["roomStack"].push(new _menu_js__WEBPACK_IMPORTED_MODULE_7__["MenuRoom"]());
 } // Called every frame, starting straight after init() is run.
 
 
@@ -3808,7 +3808,11 @@ var images = {
   character: "res/Character.png",
   FlisesettGGJ2020: "res/FlisesettGGJ2020.png",
   misc: "res/SparkleInventoryAndStuff.png",
-  scroll: "res/InventoryScroll.png"
+  scroll: "res/InventoryScroll.png",
+  menubg: "res/MenuScreen_WIP.png",
+  buttons: "res/Buttons.png",
+  credits: "res/Credits.png",
+  victory: "res/Victory.png"
 };
 var animations = {
   player_idle: {
@@ -4182,6 +4186,123 @@ camera.setBounds = function (left, right, top, bottom) {
   camera.bounds_top = top;
   camera.bounds_bottom = bottom;
 };
+
+/***/ }),
+
+/***/ "./src/credits.js":
+/*!************************!*\
+  !*** ./src/credits.js ***!
+  \************************/
+/*! exports provided: CreditsRoom */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CreditsRoom", function() { return CreditsRoom; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _game_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./game.js */ "./src/game.js");
+/* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
+/* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
+/* harmony import */ var _game_room_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./game_room.js */ "./src/game_room.js");
+
+
+
+
+
+
+
+
+
+var CreditsRoom =
+/*#__PURE__*/
+function (_Room) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default()(CreditsRoom, _Room);
+
+  function CreditsRoom() {
+    var _this;
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, CreditsRoom);
+
+    _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(CreditsRoom).call(this));
+    var button_left = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / 2 - 32 / 2;
+    _this.buttons = [{
+      x: button_left,
+      y: _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height - 48,
+      image: _graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['buttons'],
+      normal_x: 96,
+      normal_y: 0,
+      hover_x: 128,
+      hover_y: 0,
+      click_x: 160,
+      click_y: 0,
+      onclick: function onclick() {
+        _game_js__WEBPACK_IMPORTED_MODULE_5__["roomStack"].pop();
+      }
+    }];
+    return _this;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(CreditsRoom, [{
+    key: "update",
+    value: function update(dt) {
+      var mouse_x = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x;
+      var mouse_y = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y;
+      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['menubg'], 0, 0);
+      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['credits'], 0, 0);
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this.buttons[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var button = _step.value;
+          var src_x = button.normal_x;
+          var src_y = button.normal_y;
+
+          if (mouse_x >= button.x && mouse_x < button.x + 32 && mouse_y >= button.y && mouse_y < button.y + 32) {
+            if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('mouse')) {
+              // Pressed
+              src_x = button.click_x;
+              src_y = button.click_y;
+            } else if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustReleased('mouse')) {
+              button.onclick();
+            } else {
+              // Hover
+              src_x = button.hover_x;
+              src_y = button.hover_y;
+            }
+          }
+
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(button.image, src_x, src_y, 32, 16, button.x, button.y, 32, 16);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+  }]);
+
+  return CreditsRoom;
+}(_game_js__WEBPACK_IMPORTED_MODULE_5__["Room"]);
 
 /***/ }),
 
@@ -4981,6 +5102,137 @@ var items = {
 
 /***/ }),
 
+/***/ "./src/menu.js":
+/*!*********************!*\
+  !*** ./src/menu.js ***!
+  \*********************/
+/*! exports provided: MenuRoom */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MenuRoom", function() { return MenuRoom; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _game_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./game.js */ "./src/game.js");
+/* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
+/* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
+/* harmony import */ var _game_room_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./game_room.js */ "./src/game_room.js");
+/* harmony import */ var _credits_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./credits.js */ "./src/credits.js");
+
+
+
+
+
+
+
+
+
+
+var MenuRoom =
+/*#__PURE__*/
+function (_Room) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default()(MenuRoom, _Room);
+
+  function MenuRoom() {
+    var _this;
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, MenuRoom);
+
+    _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(MenuRoom).call(this));
+    var button_left = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / 2 - 32 / 2;
+    _this.buttons = [{
+      x: button_left,
+      y: _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height / 2 - 48,
+      image: _graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['buttons'],
+      normal_x: 0,
+      normal_y: 0,
+      hover_x: 32,
+      hover_y: 0,
+      click_x: 64,
+      click_y: 0,
+      onclick: function onclick() {
+        _game_js__WEBPACK_IMPORTED_MODULE_5__["roomStack"].push(new _game_room_js__WEBPACK_IMPORTED_MODULE_8__["GameRoom"]());
+      }
+    }, {
+      x: button_left,
+      y: _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height / 2 + 32,
+      image: _graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['buttons'],
+      normal_x: 192,
+      normal_y: 0,
+      hover_x: 224,
+      hover_y: 0,
+      click_x: 0,
+      click_y: 16,
+      onclick: function onclick() {
+        _game_js__WEBPACK_IMPORTED_MODULE_5__["roomStack"].push(new _credits_js__WEBPACK_IMPORTED_MODULE_9__["CreditsRoom"]());
+      }
+    }];
+    return _this;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(MenuRoom, [{
+    key: "update",
+    value: function update(dt) {
+      var mouse_x = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x;
+      var mouse_y = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y;
+      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['menubg'], 0, 0);
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this.buttons[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var button = _step.value;
+          var src_x = button.normal_x;
+          var src_y = button.normal_y;
+
+          if (mouse_x >= button.x && mouse_x < button.x + 32 && mouse_y >= button.y && mouse_y < button.y + 32) {
+            if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('mouse')) {
+              // Pressed
+              src_x = button.click_x;
+              src_y = button.click_y;
+            } else if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustReleased('mouse')) {
+              button.onclick();
+            } else {
+              // Hover
+              src_x = button.hover_x;
+              src_y = button.hover_y;
+            }
+          }
+
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(button.image, src_x, src_y, 32, 16, button.x, button.y, 32, 16);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+  }]);
+
+  return MenuRoom;
+}(_game_js__WEBPACK_IMPORTED_MODULE_5__["Room"]);
+
+/***/ }),
+
 /***/ "./src/musicManager.js":
 /*!*****************************!*\
   !*** ./src/musicManager.js ***!
@@ -5149,6 +5401,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _inventory_item_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./inventory_item.js */ "./src/inventory_item.js");
 /* harmony import */ var _block_fade_effect_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./block_fade_effect.js */ "./src/block_fade_effect.js");
 /* harmony import */ var _pickup_effect_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pickup_effect.js */ "./src/pickup_effect.js");
+/* harmony import */ var _victory_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./victory.js */ "./src/victory.js");
+
+
 
 
 
@@ -5224,6 +5479,8 @@ function (_GameObject) {
     _this.sparkle_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('sparkle');
     _this.pickup_sparkle_anim = new _animation_js__WEBPACK_IMPORTED_MODULE_9__["Animation"]('pickup_sparkle');
     _this.curr_anim = _this.idle_anim;
+    _this.can_open_ipad = true;
+    _this.grounded = true;
     _this.game = game;
     _this.map = game.map;
     _this.fall_speed = 0;
@@ -5260,12 +5517,13 @@ function (_GameObject) {
           this.curr_anim = this.idle_anim;
         }
 
-        var can_open_ipad = true;
+        this.can_open_ipad = true;
 
         if (this.collidesAt(this.x, this.y + 1)) {
           this.fall_speed = 0;
+          this.grounded = true;
         } else {
-          can_open_ipad = false;
+          this.can_open_ipad = false;
           this.fall_speed += 4;
 
           if (this.fall_speed > MAX_FALL_SPEED) {
@@ -5273,12 +5531,13 @@ function (_GameObject) {
           }
 
           this.curr_anim = this.falling_anim;
+          this.grounded = false;
         }
 
         var foottile = this.tileAt(this.x, this.y);
 
         if (foottile === STAIRS_LEFT || foottile === STAIRS_RIGHT) {
-          can_open_ipad = true;
+          this.can_open_ipad = true;
           var base_y = Math.floor(this.y / this.map.tile_height) * this.map.tile_height;
 
           if (foottile === STAIRS_LEFT) {
@@ -5289,8 +5548,10 @@ function (_GameObject) {
 
             this.y = Math.floor(base_y + (this.map.tile_height - 1) * (1 - _t)) - 2;
           }
+
+          this.grounded = true;
         } else if (foottile === LADDER) {
-          can_open_ipad = false;
+          this.can_open_ipad = false;
           this.fall_speed = 0;
 
           if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('up', 'w')) {
@@ -5314,7 +5575,9 @@ function (_GameObject) {
             if (pickupable === 'backpack') {
               // Pickup backpack
               this.inventory.push(null);
-            } else if (pickupable === 'strawberry') {// WIN
+            } else if (pickupable === 'strawberry') {
+              // WIN
+              _game_js__WEBPACK_IMPORTED_MODULE_5__["roomStack"].push(new _victory_js__WEBPACK_IMPORTED_MODULE_13__["VictoryRoom"](this.pickedup_pickups, this.map));
             } else {
               this.pickedup_pickups.push(pickupable);
             }
@@ -5327,7 +5590,7 @@ function (_GameObject) {
         this.moveY(this.fall_speed * dt);
         _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].target(this.x, this.y);
 
-        if (can_open_ipad && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
+        if (this.can_open_ipad && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
           this.state = states.TILE_PLACING;
         }
       } else {
@@ -5499,6 +5762,10 @@ function (_GameObject) {
       } // Draw
 
 
+      if (!this.grounded) {
+        this.curr_anim = this.falling_anim;
+      }
+
       this.curr_anim.update(dt);
       this.curr_anim.draw(this.x, this.y);
 
@@ -5552,28 +5819,30 @@ function (_GameObject) {
 
       _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['scroll'], 48, 0, 24, 24, scroll_x + 24, hud_y - 4, 24, 24); // Keyboard shortcuts for inventory
 
-      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('one') && this.inventory[0] !== null) {
-        this.held_item = this.inventory[0];
-        this.active_inventory_slot = 0;
-        this.state = states.TILE_PLACING;
-      }
+      if (this.can_open_ipad) {
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('one') && this.inventory[0] !== null) {
+          this.held_item = this.inventory[0];
+          this.active_inventory_slot = 0;
+          this.state = states.TILE_PLACING;
+        }
 
-      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('two') && this.inventory.length >= 2 && this.inventory[1] !== null) {
-        this.held_item = this.inventory[1];
-        this.active_inventory_slot = 1;
-        this.state = states.TILE_PLACING;
-      }
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('two') && this.inventory.length >= 2 && this.inventory[1] !== null) {
+          this.held_item = this.inventory[1];
+          this.active_inventory_slot = 1;
+          this.state = states.TILE_PLACING;
+        }
 
-      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('three') && this.inventory.length >= 3 && this.inventory[2] !== null) {
-        this.held_item = this.inventory[2];
-        this.active_inventory_slot = 2;
-        this.state = states.TILE_PLACING;
-      }
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('three') && this.inventory.length >= 3 && this.inventory[2] !== null) {
+          this.held_item = this.inventory[2];
+          this.active_inventory_slot = 2;
+          this.state = states.TILE_PLACING;
+        }
 
-      if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('four') && this.inventory.length >= 4 && this.inventory[3] !== null) {
-        this.held_item = this.inventory[3];
-        this.active_inventory_slot = 3;
-        this.state = states.TILE_PLACING;
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('four') && this.inventory.length >= 4 && this.inventory[3] !== null) {
+          this.held_item = this.inventory[3];
+          this.active_inventory_slot = 3;
+          this.state = states.TILE_PLACING;
+        }
       }
     }
   }, {
@@ -6290,6 +6559,171 @@ var removeFromArray = function removeFromArray(array, element) {
 
   return false;
 };
+
+/***/ }),
+
+/***/ "./src/victory.js":
+/*!************************!*\
+  !*** ./src/victory.js ***!
+  \************************/
+/*! exports provided: VictoryRoom */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VictoryRoom", function() { return VictoryRoom; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _game_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./game.js */ "./src/game.js");
+/* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
+/* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
+
+
+
+
+
+
+
+
+var pickupables = {
+  muffin: 31,
+  eye: 42,
+  die: 48,
+  wine: 53,
+  cup: 57
+};
+var VictoryRoom =
+/*#__PURE__*/
+function (_Room) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default()(VictoryRoom, _Room);
+
+  function VictoryRoom(pickups, map) {
+    var _this;
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, VictoryRoom);
+
+    _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(VictoryRoom).call(this));
+    _this.pickups = pickups;
+    _this.ts = map.tileset;
+    var button_left = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / 2 - 32 / 2;
+    _this.buttons = [{
+      x: button_left,
+      y: _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height - 48,
+      image: _graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['buttons'],
+      normal_x: 96,
+      normal_y: 0,
+      hover_x: 128,
+      hover_y: 0,
+      click_x: 160,
+      click_y: 0,
+      onclick: function onclick() {
+        // Pop back to main menu
+        _game_js__WEBPACK_IMPORTED_MODULE_5__["roomStack"].pop();
+        _game_js__WEBPACK_IMPORTED_MODULE_5__["roomStack"].pop();
+      }
+    }];
+    return _this;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(VictoryRoom, [{
+    key: "update",
+    value: function update(dt) {
+      var mouse_x = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x;
+      var mouse_y = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y;
+      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['menubg'], 0, 0);
+      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['victory'], 0, 0); // Strawberry
+
+      this.ts.drawTile(61, _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / 2 - 8, _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height / 2 - 8);
+      var pickups_x = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / 2 - 5 / 2 * 18;
+      var pickups_y = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height / 2 + 16;
+
+      for (var pickupable in pickupables) {
+        // Draw
+        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 0, 16, 16, pickups_x, pickups_y, 16, 16);
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = this.pickups[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var p = _step.value;
+
+            if (pickupable === p) {
+              this.ts.drawTile(pickupables[pickupable], pickups_x, pickups_y);
+              break;
+            }
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+
+        pickups_x += 18;
+      }
+
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.buttons[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var button = _step2.value;
+          var src_x = button.normal_x;
+          var src_y = button.normal_y;
+
+          if (mouse_x >= button.x && mouse_x < button.x + 32 && mouse_y >= button.y && mouse_y < button.y + 32) {
+            if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyDown('mouse')) {
+              // Pressed
+              src_x = button.click_x;
+              src_y = button.click_y;
+            } else if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustReleased('mouse')) {
+              button.onclick();
+            } else {
+              // Hover
+              src_x = button.hover_x;
+              src_y = button.hover_y;
+            }
+          }
+
+          _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(button.image, src_x, src_y, 32, 16, button.x, button.y, 32, 16);
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+            _iterator2["return"]();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+    }
+  }]);
+
+  return VictoryRoom;
+}(_game_js__WEBPACK_IMPORTED_MODULE_5__["Room"]);
 
 /***/ })
 
