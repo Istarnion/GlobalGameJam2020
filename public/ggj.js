@@ -3812,7 +3812,9 @@ var images = {
   menubg: "res/MenuScreen_WIP.png",
   buttons: "res/Buttons.png",
   credits: "res/Credits.png",
-  victory: "res/Victory.png"
+  victory: "res/Victory.png",
+  tutorial1: "res/tutorial1.png",
+  tutorial2: "res/tutorial2.png"
 };
 var animations = {
   player_idle: {
@@ -4524,6 +4526,10 @@ function (_Room) {
 
     _this.arena.add(_this.player);
 
+    _this.tut1_x = (_this.map.properties.player_start_x - 1) * 16;
+    _this.tut1_y = (_this.map.properties.player_start_y - 2) * 16;
+    _this.tut2_x = _this.tut1_x + 12 * 16;
+    _this.tut2_y = _this.tut1_y - 4 * 16;
     return _this;
   }
 
@@ -4537,6 +4543,8 @@ function (_Room) {
       var across = _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].width / this.map.tile_width + 1;
       var down = _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].height / this.map.tile_height + 1;
       this.map.drawLayer(0, left, right, across, down);
+      _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_9__["sprites"]['tutorial1'], this.tut1_x, this.tut1_y);
+      _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_9__["sprites"]['tutorial2'], this.tut2_x, this.tut2_y);
       this.arena.update(dt);
       _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].restore();
       this.player.updateHUD();
@@ -4636,7 +4644,9 @@ var setGameSize = function setGameSize(w, h) {
 }; // Clear the canvas
 
 var clear = function clear() {
+  gfx.fillStyle = '#140D1C';
   gfx.clearRect(0, 0, gfx.width, gfx.height);
+  gfx.fillRect(0, 0, gfx.width, gfx.height);
 }; // A cache of loaded sprites. Access them by sprites[sprite_name]
 
 var sprites = {}; // Load a single image. Input format: ["name", "file"]
@@ -5744,10 +5754,10 @@ function (_GameObject) {
 
         var tiles_down = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height / this.map.tile_height;
         var tiles_across = _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / this.map.tile_width;
-        var leftmost = Math.max(0, Math.floor((this.x - _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width / 2) / this.map.tile_width));
-        var topmost = Math.max(0, Math.floor((this.y - _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height / 2) / this.map.tile_height));
-        var rightmost = Math.min(this.map.width - 1, leftmost + tiles_across);
-        var bottommost = Math.min(this.map.height - 1, topmost + tiles_down);
+        var leftmost = Math.max(0, Math.floor((this.x - _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].width) / this.map.tile_width) - 1);
+        var topmost = Math.max(0, Math.floor((this.y - _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].height) / this.map.tile_height) - 1);
+        var rightmost = Math.min(this.map.width, leftmost + 2 * tiles_across);
+        var bottommost = Math.min(this.map.height, topmost + 2 * tiles_down);
         this.sparkle_anim.update(dt);
 
         for (var _y4 = topmost; _y4 < bottommost; ++_y4) {
