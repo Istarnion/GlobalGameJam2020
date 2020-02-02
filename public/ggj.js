@@ -3813,8 +3813,8 @@ var images = {
   buttons: "res/Buttons.png",
   credits: "res/Credits.png",
   victory: "res/Victory.png",
-  tutorial1: "res/tutorial1.png",
-  tutorial2: "res/tutorial2.png"
+  tutorial1: "res/Tutorial1.png",
+  tutorial2: "res/Tutorial2.png"
 };
 var animations = {
   player_idle: {
