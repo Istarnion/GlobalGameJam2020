@@ -106,6 +106,8 @@ export class Player extends GameObject {
                 movement_x += 1;
             }
 
+            musicManager.playFootsteps(Math.abs(movement_x) > 0);
+
             if(Math.abs(movement_x) > 0) {
                 this.moveX(movement_x * WALK_SPEED * dt);
                 if(movement_x > 0) {
@@ -397,12 +399,15 @@ export class Player extends GameObject {
         gfx.drawImage(sprites['scroll'], 0, 0, 24, 24, scroll_x-24, hud_y-4, 24, 24);
         gfx.drawImage(sprites['scroll'], 24, 0, 24, 24, scroll_x, hud_y-4, 24, 24);
 
-        gfx.drawImage(sprites['FlisesettGGJ2020'], 32, 32, 16, 16, hud_x, hud_y, 16, 16);
+        const backpack_x = hud_x;
+
+        for(var i=0; i<this.inventory.length; ++i) {
+            scroll_x += 24;
+            gfx.drawImage(sprites['scroll'], 24, 0, 24, 24, scroll_x, hud_y-4, 24, 24);
+        }
 
         for(var i=0; i<this.inventory.length; ++i) {
             hud_x += 18;
-            scroll_x += 24;
-            gfx.drawImage(sprites['scroll'], 24, 0, 24, 24, scroll_x, hud_y-4, 24, 24);
 
             if(this.state === states.TILE_PLACING && input.isKeyJustPressed('mouse')) {
                 if(input.mouse_x > hud_x && input.mouse_x <= hud_x+16 &&
@@ -438,37 +443,63 @@ export class Player extends GameObject {
             }
         }
 
+        this.map.tileset.drawTile(19, backpack_x, hud_y);
+
         // Scroll right edge
         gfx.drawImage(sprites['scroll'], 48, 0, 24, 24, scroll_x + 24, hud_y-4, 24, 24);
 
         // Keyboard shortcuts for inventory
         if(this.can_open_ipad) {
-            if(input.isKeyJustPressed('one') && this.inventory[0] !== null) {
-                this.held_item = this.inventory[0];
-                this.active_inventory_slot = 0;
-                musicManager.playSFX('open');
-                this.state = states.TILE_PLACING;
+            if(input.isKeyJustPressed('one')) {
+                if(this.inventory[0] !== null) {
+                    this.held_item = this.inventory[0];
+                    this.active_inventory_slot = 0;
+                    if(this.state !== states.TILE_PLACING) musicManager.playSFX('open');
+                    this.state = states.TILE_PLACING;
+                }
+                else {
+                    this.active_inventory_slot = null;
+                    this.held_item = null;
+                }
             }
 
-            if(input.isKeyJustPressed('two') && this.inventory.length >= 2 && this.inventory[1] !== null) {
-                this.held_item = this.inventory[1];
-                this.active_inventory_slot = 1;
-                musicManager.playSFX('open');
-                this.state = states.TILE_PLACING;
+            if(input.isKeyJustPressed('two') && this.inventory.length >= 2) {
+                if(this.inventory[1] !== null) {
+                    this.held_item = this.inventory[1];
+                    this.active_inventory_slot = 1;
+                    if(this.state !== states.TILE_PLACING) musicManager.playSFX('open');
+                    this.state = states.TILE_PLACING;
+                }
+                else {
+                    this.active_inventory_slot = null;
+                    this.held_item = null;
+                }
             }
 
-            if(input.isKeyJustPressed('three') && this.inventory.length >= 3 && this.inventory[2] !== null) {
-                this.held_item = this.inventory[2];
-                this.active_inventory_slot = 2;
-                musicManager.playSFX('open');
-                this.state = states.TILE_PLACING;
+            if(input.isKeyJustPressed('three') && this.inventory.length >= 3) {
+                if(this.inventory[2] !== null) {
+                    this.held_item = this.inventory[2];
+                    this.active_inventory_slot = 2;
+                    if(this.state !== states.TILE_PLACING) musicManager.playSFX('open');
+                    this.state = states.TILE_PLACING;
+                }
+                else {
+                    this.active_inventory_slot = null;
+                    this.held_item = null;
+                }
             }
 
-            if(input.isKeyJustPressed('four') && this.inventory.length >= 4 && this.inventory[3] !== null) {
-                this.held_item = this.inventory[3];
-                this.active_inventory_slot = 3;
-                musicManager.playSFX('open');
-                this.state = states.TILE_PLACING;
+            if(input.isKeyJustPressed('four') && this.inventory.length >= 4) {
+                if(this.inventory[3] !== null) {
+                    this.held_item = this.inventory[3];
+                    this.active_inventory_slot = 3;
+                    if(this.state !== states.TILE_PLACING) musicManager.playSFX('open');
+                    this.state = states.TILE_PLACING;
+                }
+                else {
+                    this.active_inventory_slot = null;
+                    this.held_item = null;
+                }
             }
         }
     }

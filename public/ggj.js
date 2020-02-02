@@ -4215,6 +4215,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
 /* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
 /* harmony import */ var _game_room_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./game_room.js */ "./src/game_room.js");
+/* harmony import */ var _musicManager_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./musicManager.js */ "./src/musicManager.js");
+
 
 
 
@@ -4247,6 +4249,7 @@ function (_Room) {
       click_x: 160,
       click_y: 0,
       onclick: function onclick() {
+        _musicManager_js__WEBPACK_IMPORTED_MODULE_9__["musicManager"].playSFX('button');
         _game_js__WEBPACK_IMPORTED_MODULE_5__["roomStack"].pop();
       }
     }];
@@ -4254,6 +4257,16 @@ function (_Room) {
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(CreditsRoom, [{
+    key: "init",
+    value: function init() {
+      _musicManager_js__WEBPACK_IMPORTED_MODULE_9__["musicManager"].setCreditsState();
+    }
+  }, {
+    key: "resume",
+    value: function resume() {
+      _musicManager_js__WEBPACK_IMPORTED_MODULE_9__["musicManager"].setCreditsState();
+    }
+  }, {
     key: "update",
     value: function update(dt) {
       var mouse_x = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x;
@@ -4497,6 +4510,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
 /* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./camera.js */ "./src/camera.js");
 /* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
+/* harmony import */ var _musicManager_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./musicManager.js */ "./src/musicManager.js");
+
 
 
 
@@ -4534,6 +4549,16 @@ function (_Room) {
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(GameRoom, [{
+    key: "init",
+    value: function init() {
+      _musicManager_js__WEBPACK_IMPORTED_MODULE_12__["musicManager"].setGameState();
+    }
+  }, {
+    key: "resume",
+    value: function resume() {
+      _musicManager_js__WEBPACK_IMPORTED_MODULE_12__["musicManager"].setGameState();
+    }
+  }, {
     key: "update",
     value: function update(dt) {
       _graphics_js__WEBPACK_IMPORTED_MODULE_9__["gfx"].save();
@@ -5137,6 +5162,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
 /* harmony import */ var _game_room_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./game_room.js */ "./src/game_room.js");
 /* harmony import */ var _credits_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./credits.js */ "./src/credits.js");
+/* harmony import */ var _musicManager_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./musicManager.js */ "./src/musicManager.js");
+
 
 
 
@@ -5170,6 +5197,7 @@ function (_Room) {
       click_x: 64,
       click_y: 0,
       onclick: function onclick() {
+        _musicManager_js__WEBPACK_IMPORTED_MODULE_10__["musicManager"].playSFX('button');
         _game_js__WEBPACK_IMPORTED_MODULE_5__["roomStack"].push(new _game_room_js__WEBPACK_IMPORTED_MODULE_8__["GameRoom"]());
       }
     }, {
@@ -5183,6 +5211,7 @@ function (_Room) {
       click_x: 0,
       click_y: 16,
       onclick: function onclick() {
+        _musicManager_js__WEBPACK_IMPORTED_MODULE_10__["musicManager"].playSFX('button');
         _game_js__WEBPACK_IMPORTED_MODULE_5__["roomStack"].push(new _credits_js__WEBPACK_IMPORTED_MODULE_9__["CreditsRoom"]());
       }
     }];
@@ -5190,6 +5219,16 @@ function (_Room) {
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(MenuRoom, [{
+    key: "init",
+    value: function init() {
+      _musicManager_js__WEBPACK_IMPORTED_MODULE_10__["musicManager"].setMenuState();
+    }
+  }, {
+    key: "resume",
+    value: function resume() {
+      _musicManager_js__WEBPACK_IMPORTED_MODULE_10__["musicManager"].setMenuState();
+    }
+  }, {
     key: "update",
     value: function update(dt) {
       var mouse_x = _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x;
@@ -5282,12 +5321,56 @@ function () {
       src: ['res/sounds/Credits_Loop.mp3'],
       loop: true
     });
-    this.setGameState();
+    this.sfx = {
+      yoink: new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+        src: ['res/sounds/Yoink.wav'],
+        volume: 0.1
+      }),
+      place: new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+        src: ['res/sounds/Place.wav'],
+        volume: 0.5
+      }),
+      backpack: new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+        src: ['res/sounds/Backpack.wav'],
+        volume: 0.5
+      }),
+      pickup: new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+        src: ['res/sounds/Pickup.wav'],
+        volume: 0.5
+      }),
+      strawberry: new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+        src: ['res/sounds/Strawberry.wav'],
+        volume: 0.5
+      }),
+      full: new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+        src: ['res/sounds/FullInventory.wav'],
+        volume: 0.5
+      }),
+      open: new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+        src: ['res/sounds/OpenTablet.wav'],
+        volume: 0.5
+      }),
+      close: new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+        src: ['res/sounds/CloseTablet.wav'],
+        volume: 0.5
+      }),
+      button: new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+        src: ['res/sounds/Button.wav'],
+        volume: 0.5
+      })
+    };
+    this.footsteps = new howler__WEBPACK_IMPORTED_MODULE_2__["Howl"]({
+      src: ['res/sounds/footsteps.wav'],
+      loop: true,
+      volume: 0.1
+    });
+    this.footsteps_playing = false;
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(MusicManager, [{
     key: "setMenuState",
     value: function setMenuState() {
+      this.music.creditsLoop.stop();
       this.music.gameLoop.stop();
       this.music.menuLoop.play();
     }
@@ -5304,6 +5387,22 @@ function () {
       this.music.menuLoop.stop();
       this.music.gameLoop.stop();
       this.music.creditsLoop.play();
+    }
+  }, {
+    key: "playSFX",
+    value: function playSFX(sound) {
+      this.sfx[sound].play();
+    }
+  }, {
+    key: "playFootsteps",
+    value: function playFootsteps(should_play) {
+      if (this.footsteps_playing && !should_play) {
+        this.footsteps_playing = false;
+        this.footsteps.stop();
+      } else if (!this.footsteps_playing && should_play) {
+        this.footsteps_playing = true;
+        this.footsteps.play();
+      }
     }
   }, {
     key: "update",
@@ -5412,6 +5511,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _block_fade_effect_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./block_fade_effect.js */ "./src/block_fade_effect.js");
 /* harmony import */ var _pickup_effect_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pickup_effect.js */ "./src/pickup_effect.js");
 /* harmony import */ var _victory_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./victory.js */ "./src/victory.js");
+/* harmony import */ var _musicManager_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./musicManager.js */ "./src/musicManager.js");
+
 
 
 
@@ -5515,6 +5616,8 @@ function (_GameObject) {
           movement_x += 1;
         }
 
+        _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playFootsteps(Math.abs(movement_x) > 0);
+
         if (Math.abs(movement_x) > 0) {
           this.moveX(movement_x * WALK_SPEED * dt);
 
@@ -5584,11 +5687,14 @@ function (_GameObject) {
           if (centertile === tile) {
             if (pickupable === 'backpack') {
               // Pickup backpack
+              _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('backpack');
               this.inventory.push(null);
             } else if (pickupable === 'strawberry') {
               // WIN
+              _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('strawberry');
               _game_js__WEBPACK_IMPORTED_MODULE_5__["roomStack"].push(new _victory_js__WEBPACK_IMPORTED_MODULE_13__["VictoryRoom"](this.pickedup_pickups, this.map));
             } else {
+              _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('pickup');
               this.pickedup_pickups.push(pickupable);
             }
 
@@ -5601,6 +5707,7 @@ function (_GameObject) {
         _camera_js__WEBPACK_IMPORTED_MODULE_8__["camera"].target(this.x, this.y);
 
         if (this.can_open_ipad && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
+          _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('open');
           this.state = states.TILE_PLACING;
         }
       } else {
@@ -5621,6 +5728,10 @@ function (_GameObject) {
               if (this.inventory[i] !== null) {
                 ++first_open_inventory_slot;
               } else break;
+            }
+
+            if (can_pickup && first_open_inventory_slot >= this.inventory.length) {
+              _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('full');
             }
 
             if (can_pickup && first_open_inventory_slot < this.inventory.length) {
@@ -5682,6 +5793,7 @@ function (_GameObject) {
                 this.map.layers[TILE_LAYER].tiles[_i3] = 0;
                 this.map.layers[COLLISION_LAYER].tiles[_i3] = 0;
                 this.map.layers[PICKUP_LAYER].tiles[_i3] = 65;
+                _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('yoink');
                 this.game.arena.add(new _block_fade_effect_js__WEBPACK_IMPORTED_MODULE_11__["BlockFadeEffect"](_i3 % this.map.width, Math.floor(_i3 / this.map.width)));
               }
             }
@@ -5705,6 +5817,8 @@ function (_GameObject) {
             }
 
             if (can_place) {
+              _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('place');
+
               for (var _y2 = 0; _y2 < this.held_item.height; ++_y2) {
                 for (var _x2 = 0; _x2 < this.held_item.width; ++_x2) {
                   var local_index = _x2 + _y2 * this.held_item.width;
@@ -5720,6 +5834,7 @@ function (_GameObject) {
               this.held_item = null;
               this.inventory[this.active_inventory_slot] = null;
               this.active_inventory_slot = null;
+              _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('close');
               this.state = states.PLATFORMING;
             }
           }
@@ -5747,6 +5862,7 @@ function (_GameObject) {
         this.curr_anim = this.ipad_lookat_anim;
 
         if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('e')) {
+          _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('close');
           this.state = states.PLATFORMING;
           this.active_inventory_slot = null;
           this.held_item = null;
@@ -5793,12 +5909,15 @@ function (_GameObject) {
 
       _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['scroll'], 0, 0, 24, 24, scroll_x - 24, hud_y - 4, 24, 24);
       _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['scroll'], 24, 0, 24, 24, scroll_x, hud_y - 4, 24, 24);
-      _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['FlisesettGGJ2020'], 32, 32, 16, 16, hud_x, hud_y, 16, 16);
+      var backpack_x = hud_x;
+
+      for (var i = 0; i < this.inventory.length; ++i) {
+        scroll_x += 24;
+        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['scroll'], 24, 0, 24, 24, scroll_x, hud_y - 4, 24, 24);
+      }
 
       for (var i = 0; i < this.inventory.length; ++i) {
         hud_x += 18;
-        scroll_x += 24;
-        _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['scroll'], 24, 0, 24, 24, scroll_x, hud_y - 4, 24, 24);
 
         if (this.state === states.TILE_PLACING && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('mouse')) {
           if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x > hud_x && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_x <= hud_x + 16 && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y > hud_y && _input_js__WEBPACK_IMPORTED_MODULE_7__["input"].mouse_y <= hud_y + 16) {
@@ -5824,34 +5943,59 @@ function (_GameObject) {
             _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['misc'], 0, 16, 16, 16, hud_x, hud_y, 16, 16);
           }
         }
-      } // Scroll right edge
+      }
 
+      this.map.tileset.drawTile(19, backpack_x, hud_y); // Scroll right edge
 
       _graphics_js__WEBPACK_IMPORTED_MODULE_6__["gfx"].drawImage(_graphics_js__WEBPACK_IMPORTED_MODULE_6__["sprites"]['scroll'], 48, 0, 24, 24, scroll_x + 24, hud_y - 4, 24, 24); // Keyboard shortcuts for inventory
 
       if (this.can_open_ipad) {
-        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('one') && this.inventory[0] !== null) {
-          this.held_item = this.inventory[0];
-          this.active_inventory_slot = 0;
-          this.state = states.TILE_PLACING;
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('one')) {
+          if (this.inventory[0] !== null) {
+            this.held_item = this.inventory[0];
+            this.active_inventory_slot = 0;
+            if (this.state !== states.TILE_PLACING) _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('open');
+            this.state = states.TILE_PLACING;
+          } else {
+            this.active_inventory_slot = null;
+            this.held_item = null;
+          }
         }
 
-        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('two') && this.inventory.length >= 2 && this.inventory[1] !== null) {
-          this.held_item = this.inventory[1];
-          this.active_inventory_slot = 1;
-          this.state = states.TILE_PLACING;
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('two') && this.inventory.length >= 2) {
+          if (this.inventory[1] !== null) {
+            this.held_item = this.inventory[1];
+            this.active_inventory_slot = 1;
+            if (this.state !== states.TILE_PLACING) _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('open');
+            this.state = states.TILE_PLACING;
+          } else {
+            this.active_inventory_slot = null;
+            this.held_item = null;
+          }
         }
 
-        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('three') && this.inventory.length >= 3 && this.inventory[2] !== null) {
-          this.held_item = this.inventory[2];
-          this.active_inventory_slot = 2;
-          this.state = states.TILE_PLACING;
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('three') && this.inventory.length >= 3) {
+          if (this.inventory[2] !== null) {
+            this.held_item = this.inventory[2];
+            this.active_inventory_slot = 2;
+            if (this.state !== states.TILE_PLACING) _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('open');
+            this.state = states.TILE_PLACING;
+          } else {
+            this.active_inventory_slot = null;
+            this.held_item = null;
+          }
         }
 
-        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('four') && this.inventory.length >= 4 && this.inventory[3] !== null) {
-          this.held_item = this.inventory[3];
-          this.active_inventory_slot = 3;
-          this.state = states.TILE_PLACING;
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('four') && this.inventory.length >= 4) {
+          if (this.inventory[3] !== null) {
+            this.held_item = this.inventory[3];
+            this.active_inventory_slot = 3;
+            if (this.state !== states.TILE_PLACING) _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('open');
+            this.state = states.TILE_PLACING;
+          } else {
+            this.active_inventory_slot = null;
+            this.held_item = null;
+          }
         }
       }
     }
@@ -6595,6 +6739,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _game_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./game.js */ "./src/game.js");
 /* harmony import */ var _graphics_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./graphics.js */ "./src/graphics.js");
 /* harmony import */ var _input_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./input.js */ "./src/input.js");
+/* harmony import */ var _musicManager_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./musicManager.js */ "./src/musicManager.js");
+
 
 
 
@@ -6604,11 +6750,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var pickupables = {
-  muffin: 31,
   eye: 42,
   die: 48,
-  wine: 53,
-  cup: 57
+  muffin: 31,
+  cup: 57,
+  wine: 53
 };
 var VictoryRoom =
 /*#__PURE__*/
