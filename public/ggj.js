@@ -4970,6 +4970,7 @@ var input = {
     two: [false, false],
     three: [false, false],
     four: [false, false],
+    five: [false, false],
     mouse: [false, false]
   }
 };
@@ -5040,6 +5041,10 @@ var getKeyNameFromCode = function getKeyNameFromCode(code) {
 
     case "Digit4":
       key = "four";
+      break;
+
+    case "Digit5":
+      key = "five";
       break;
 
     default:
@@ -5990,6 +5995,18 @@ function (_GameObject) {
           if (this.inventory[3] !== null) {
             this.held_item = this.inventory[3];
             this.active_inventory_slot = 3;
+            if (this.state !== states.TILE_PLACING) _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('open');
+            this.state = states.TILE_PLACING;
+          } else {
+            this.active_inventory_slot = null;
+            this.held_item = null;
+          }
+        }
+
+        if (_input_js__WEBPACK_IMPORTED_MODULE_7__["input"].isKeyJustPressed('five') && this.inventory.length >= 5) {
+          if (this.inventory[4] !== null) {
+            this.held_item = this.inventory[4];
+            this.active_inventory_slot = 4;
             if (this.state !== states.TILE_PLACING) _musicManager_js__WEBPACK_IMPORTED_MODULE_14__["musicManager"].playSFX('open');
             this.state = states.TILE_PLACING;
           } else {

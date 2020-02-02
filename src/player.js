@@ -501,6 +501,19 @@ export class Player extends GameObject {
                     this.held_item = null;
                 }
             }
+
+            if(input.isKeyJustPressed('five') && this.inventory.length >= 5) {
+                if(this.inventory[4] !== null) {
+                    this.held_item = this.inventory[4];
+                    this.active_inventory_slot = 4;
+                    if(this.state !== states.TILE_PLACING) musicManager.playSFX('open');
+                    this.state = states.TILE_PLACING;
+                }
+                else {
+                    this.active_inventory_slot = null;
+                    this.held_item = null;
+                }
+            }
         }
     }
 

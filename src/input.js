@@ -142,6 +142,7 @@ export const input = {
         two: [false, false],
         three: [false, false],
         four: [false, false],
+        five: [false, false],
         mouse: [false, false]
     }
 };
@@ -165,6 +166,7 @@ const getKeyNameFromCode = (code) => {
         case "Digit2": key = "two"; break;
         case "Digit3": key = "three"; break;
         case "Digit4": key = "four"; break;
+        case "Digit5": key = "five"; break;
         default: break;
     }
 
