@@ -3,6 +3,7 @@ import { gfx, sprites } from "./graphics.js";
 import { input } from "./input.js";
 import { GameRoom } from "./game_room.js";
 import { CreditsRoom } from "./credits.js";
+import { musicManager } from "./musicManager.js";
 
 export class MenuRoom extends Room {
     constructor() {
@@ -21,6 +22,7 @@ export class MenuRoom extends Room {
                 click_x: 64,
                 click_y: 0,
                 onclick: function() {
+                    musicManager.playSFX('button');
                     roomStack.push(new GameRoom());
                 }
             },
@@ -35,11 +37,15 @@ export class MenuRoom extends Room {
                 click_x: 0,
                 click_y: 16,
                 onclick: function() {
+                    musicManager.playSFX('button');
                     roomStack.push(new CreditsRoom());
                 }
             }
         ];
     }
+
+    init() { musicManager.setMenuState(); }
+    resume() { musicManager.setMenuState(); }
 
     update(dt) {
         const mouse_x = input.mouse_x;

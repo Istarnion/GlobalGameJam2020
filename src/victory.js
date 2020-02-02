@@ -1,6 +1,7 @@
 import { Room, roomStack } from "./game.js";
 import { gfx, sprites } from "./graphics.js";
 import { input } from "./input.js";
+import { musicManager } from "./musicManager.js";
 
 const pickupables = {
     muffin: 31,

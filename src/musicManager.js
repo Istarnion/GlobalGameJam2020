@@ -19,10 +19,21 @@ class MusicManager {
             loop: true,
         });
 
-        this.setGameState();
+        this.sfx = {
+            yoink: new Howl({ src: ['res/sounds/Yoink.wav'] }),
+            place: new Howl({ src: ['res/sounds/Place.wav'] }),
+            backpack: new Howl({ src: ['res/sounds/Backpack.wav'] }),
+            pickup: new Howl({ src: ['res/sounds/Pickup.wav'] }),
+            strawberry: new Howl({ src: ['res/sounds/Strawberry.wav'] }),
+            full: new Howl({ src: ['res/sounds/FullInventory.wav'] }),
+            open: new Howl({ src: ['res/sounds/OpenTablet.wav'] }),
+            close: new Howl({ src: ['res/sounds/CloseTablet.wav'] }),
+            button: new Howl({ src: ['res/sounds/Button.wav'] })
+        };
     }
 
     setMenuState() {
+        this.music.creditsLoop.stop();
         this.music.gameLoop.stop();
         this.music.menuLoop.play();
     }
@@ -37,6 +48,10 @@ class MusicManager {
         this.music.menuLoop.stop();
         this.music.gameLoop.stop();
         this.music.creditsLoop.play();
+    }
+
+    playSFX(sound) {
+        this.sfx[sound].play();
     }
 
     update(deltaTime) {

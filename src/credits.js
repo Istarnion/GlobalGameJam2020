@@ -2,6 +2,7 @@ import { Room, roomStack } from "./game.js";
 import { gfx, sprites } from "./graphics.js";
 import { input } from "./input.js";
 import { GameRoom } from "./game_room.js";
+import { musicManager } from "./musicManager.js";
 
 export class CreditsRoom extends Room {
     constructor() {
@@ -20,11 +21,15 @@ export class CreditsRoom extends Room {
                 click_x: 160,
                 click_y: 0,
                 onclick: function() {
+                    musicManager.playSFX('button');
                     roomStack.pop();
                 }
             }
         ];
     }
+
+    init() { musicManager.setCreditsState(); }
+    resume() { musicManager.setCreditsState(); }
 
     update(dt) {
         const mouse_x = input.mouse_x;

@@ -4,10 +4,12 @@ import { Player } from "./player.js";
 import { gfx, sprites } from "./graphics.js";
 import { camera } from "./camera.js";
 import { input } from "./input.js";
+import { musicManager } from "./musicManager.js";
 
 export class GameRoom extends Room {
     constructor() {
         super();
+
         this.map = new TiledMap("dungeon");
         this.arena = new Arena();
 
@@ -20,6 +22,9 @@ export class GameRoom extends Room {
         this.tut2_x = this.tut1_x+12*16;
         this.tut2_y = this.tut1_y-4*16;
     }
+
+    init() { musicManager.setGameState(); }
+    resume() { musicManager.setGameState(); }
 
     update(dt) {
         gfx.save();

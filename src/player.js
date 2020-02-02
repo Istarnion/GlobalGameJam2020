@@ -8,6 +8,7 @@ import { BlockFadeEffect } from "./block_fade_effect.js";
 import { PickupEffect } from "./pickup_effect.js";
 import { roomStack } from "./game.js";
 import { VictoryRoom } from "./victory.js";
+import { musicManager } from "./musicManager.js";
 
 const MAX_FALL_SPEED = 128;
 const WALK_SPEED = 52
@@ -172,13 +173,16 @@ export class Player extends GameObject {
                 if(centertile === tile) {
                     if(pickupable === 'backpack') {
                         // Pickup backpack
+                        musicManager.playSFX('backpack');
                         this.inventory.push(null);
                     }
                     else if(pickupable === 'strawberry') {
                         // WIN
+                        musicManager.playSFX('strawberry');
                         roomStack.push(new VictoryRoom(this.pickedup_pickups, this.map));
                     }
                     else {
+                        musicManager.playSFX('pickup');
                         this.pickedup_pickups.push(pickupable);
                     }
 
@@ -192,6 +196,7 @@ export class Player extends GameObject {
             camera.target(this.x, this.y);
 
             if(this.can_open_ipad && input.isKeyJustPressed('e')) {
+                musicManager.playSFX('open');
                 this.state = states.TILE_PLACING;
             }
         }
@@ -215,6 +220,10 @@ export class Player extends GameObject {
                             ++first_open_inventory_slot;
                         }
                         else break;
+                    }
+
+                    if(can_pickup && first_open_inventory_slot >= this.inventory.length) {
+                        musicManager.playSFX('full');
                     }
 
                     if(can_pickup && first_open_inventory_slot < this.inventory.length) {
@@ -264,6 +273,7 @@ export class Player extends GameObject {
                             this.map.layers[COLLISION_LAYER].tiles[i] = 0;
                             this.map.layers[PICKUP_LAYER].tiles[i] = 65;
 
+                            musicManager.playSFX('yoink');
                             this.game.arena.add(new BlockFadeEffect(i%this.map.width,
                                                                     Math.floor(i/this.map.width)));
                         }
@@ -289,6 +299,7 @@ export class Player extends GameObject {
                     }
 
                     if(can_place) {
+                        musicManager.playSFX('place');
                         for(let y=0; y<this.held_item.height; ++y) {
                             for(let x=0; x<this.held_item.width; ++x) {
                                 const local_index = x + y * this.held_item.width;
@@ -308,6 +319,7 @@ export class Player extends GameObject {
                         this.held_item = null;
                         this.inventory[this.active_inventory_slot] = null;
                         this.active_inventory_slot = null;
+                        musicManager.playSFX('close');
                         this.state = states.PLATFORMING;
                     }
                 }
@@ -336,6 +348,7 @@ export class Player extends GameObject {
             this.curr_anim = this.ipad_lookat_anim;
 
             if(input.isKeyJustPressed('e')) {
+                musicManager.playSFX('close');
                 this.state = states.PLATFORMING;
                 this.active_inventory_slot = null;
                 this.held_item = null;
@@ -433,24 +446,28 @@ export class Player extends GameObject {
             if(input.isKeyJustPressed('one') && this.inventory[0] !== null) {
                 this.held_item = this.inventory[0];
                 this.active_inventory_slot = 0;
+                musicManager.playSFX('open');
                 this.state = states.TILE_PLACING;
             }
 
             if(input.isKeyJustPressed('two') && this.inventory.length >= 2 && this.inventory[1] !== null) {
                 this.held_item = this.inventory[1];
                 this.active_inventory_slot = 1;
+                musicManager.playSFX('open');
                 this.state = states.TILE_PLACING;
             }
 
             if(input.isKeyJustPressed('three') && this.inventory.length >= 3 && this.inventory[2] !== null) {
                 this.held_item = this.inventory[2];
                 this.active_inventory_slot = 2;
+                musicManager.playSFX('open');
                 this.state = states.TILE_PLACING;
             }
 
             if(input.isKeyJustPressed('four') && this.inventory.length >= 4 && this.inventory[3] !== null) {
                 this.held_item = this.inventory[3];
                 this.active_inventory_slot = 3;
+                musicManager.playSFX('open');
                 this.state = states.TILE_PLACING;
             }
         }
