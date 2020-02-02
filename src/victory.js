@@ -4,11 +4,11 @@ import { input } from "./input.js";
 import { musicManager } from "./musicManager.js";
 
 const pickupables = {
-    muffin: 31,
     eye: 42,
     die: 48,
-    wine: 53,
-    cup: 57
+    muffin: 31,
+    cup: 57,
+    wine: 53
 };
 
 export class VictoryRoom extends Room {
