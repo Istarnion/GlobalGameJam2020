@@ -140,18 +140,35 @@ export class Player extends GameObject {
 
             const foottile = this.tileAt(this.x, this.y);
             if(foottile === STAIRS_LEFT || foottile === STAIRS_RIGHT) {
-                this.can_open_ipad = true;
+                /*
                 const base_y = Math.floor(this.y / this.map.tile_height) * this.map.tile_height;
 
+                var max_y = base_y;
+                const x_into_tile = Math.floor(this.x % this.map.tile_width);
+                console.log(x_into_tile);
                 if(foottile === STAIRS_LEFT) {
-                    const t = ((this.x-this.width/2) % this.map.tile_width) / this.map.tile_width;
-                    this.y = Math.floor(base_y + this.map.tile_height * t)-2;
+                    max_y -= this.map.tile_height - x_into_tile;
                 }
                 else {
-                    const t = ((this.x+this.width/2) % this.map.tile_width) / this.map.tile_width;
-                    this.y = Math.floor(base_y + (this.map.tile_height-1) * (1-t))-2;
+                    max_y -= x_into_tile;
                 }
-                this.grounded = true;
+
+                if(this.y >= max_y) {
+                    this.can_open_ipad = true;
+                    this.grounded = true;
+                    this.y = max_y;
+                }
+                else {
+                    this.can_open_ipad = false;
+                    this.fall_speed += 4;
+                    if(this.fall_speed > MAX_FALL_SPEED) {
+                        this.fall_speed = MAX_FALL_SPEED;
+                    }
+
+                    this.curr_anim = this.falling_anim;
+                    this.grounded = false;
+                }
+                */
             }
             else if(foottile === LADDER) {
                 this.can_open_ipad = false;
@@ -477,11 +494,19 @@ export class Player extends GameObject {
             const sign = Math.sign(move);
 
             while(move !== 0) {
-                if(!this.collidesAt(this.x + sign, this.y)) {
-                    this.x += sign;
-                    move -= sign;
+                var could_move = false;
+                const step_height = 8;
+                for(var i=0; i<step_height; ++i) {
+                    if(!this.collidesAt(this.x + sign, this.y-i)) {
+                        this.x += sign;
+                        this.y -= i;
+                        move -= sign;
+                        could_move = true;
+                        break;
+                    }
                 }
-                else break;
+
+                if(!could_move) break;
             }
         }
     }
@@ -505,6 +530,16 @@ export class Player extends GameObject {
     }
 
     collidesAt(x, y) {
+        const ct = this.tileAt(x, y);
+        if(ct === STAIRS_LEFT || ct === STAIRS_RIGHT) {
+            const offset = Math.floor(x % this.map.tile_width);
+            const base_y = Math.floor(y / this.map.tile_height) * this.map.tile_height;
+            if((ct === STAIRS_LEFT && y > base_y + offset) ||
+               (ct === STAIRS_RIGHT && y > base_y + (this.map.tile_height - offset))) {
+                return true;
+            }
+        }
+
         const tiles = [
             this.tileAt(x-this.width/2, y-this.height),
             this.tileAt(x+this.width/2, y-this.height),
