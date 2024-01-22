@@ -450,68 +450,19 @@ export class Player extends GameObject {
 
         // Keyboard shortcuts for inventory
         if(this.can_open_ipad) {
-            if(input.isKeyJustPressed('one')) {
-                if(this.inventory[0] !== null) {
-                    this.held_item = this.inventory[0];
-                    this.active_inventory_slot = 0;
-                    if(this.state !== states.TILE_PLACING) musicManager.playSFX('open');
-                    this.state = states.TILE_PLACING;
-                }
-                else {
-                    this.active_inventory_slot = null;
-                    this.held_item = null;
-                }
-            }
-
-            if(input.isKeyJustPressed('two') && this.inventory.length >= 2) {
-                if(this.inventory[1] !== null) {
-                    this.held_item = this.inventory[1];
-                    this.active_inventory_slot = 1;
-                    if(this.state !== states.TILE_PLACING) musicManager.playSFX('open');
-                    this.state = states.TILE_PLACING;
-                }
-                else {
-                    this.active_inventory_slot = null;
-                    this.held_item = null;
-                }
-            }
-
-            if(input.isKeyJustPressed('three') && this.inventory.length >= 3) {
-                if(this.inventory[2] !== null) {
-                    this.held_item = this.inventory[2];
-                    this.active_inventory_slot = 2;
-                    if(this.state !== states.TILE_PLACING) musicManager.playSFX('open');
-                    this.state = states.TILE_PLACING;
-                }
-                else {
-                    this.active_inventory_slot = null;
-                    this.held_item = null;
-                }
-            }
-
-            if(input.isKeyJustPressed('four') && this.inventory.length >= 4) {
-                if(this.inventory[3] !== null) {
-                    this.held_item = this.inventory[3];
-                    this.active_inventory_slot = 3;
-                    if(this.state !== states.TILE_PLACING) musicManager.playSFX('open');
-                    this.state = states.TILE_PLACING;
-                }
-                else {
-                    this.active_inventory_slot = null;
-                    this.held_item = null;
-                }
-            }
-
-            if(input.isKeyJustPressed('five') && this.inventory.length >= 5) {
-                if(this.inventory[4] !== null) {
-                    this.held_item = this.inventory[4];
-                    this.active_inventory_slot = 4;
-                    if(this.state !== states.TILE_PLACING) musicManager.playSFX('open');
-                    this.state = states.TILE_PLACING;
-                }
-                else {
-                    this.active_inventory_slot = null;
-                    this.held_item = null;
+            const number_keys = [ 'one', 'two', 'three', 'four', 'five' ];
+            for(var i=0; i<number_keys.length; ++i) {
+                if(input.isKeyJustPressed(number_keys[i]) && this.inventory.length > i) {
+                    if(this.inventory[i] !== null) {
+                        this.held_item = this.inventory[i];
+                        this.active_inventory_slot = i;
+                        if(this.state !== states.TILE_PLACING) musicManager.playSFX('open');
+                        this.state = states.TILE_PLACING;
+                    }
+                    else {
+                        this.active_inventory_slot = null;
+                        this.held_item = null;
+                    }
                 }
             }
         }
